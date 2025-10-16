@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OFTO Scheme: Industry Evaluation & Recommendation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-active {
+            border-bottom: 2px solid #2563eb;
+            color: #2563eb;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content-active {
+            display: block;
+        }
+        /* Simple fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                     <div class="bg-blue-600 p-2 rounded-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">OFTO Scheme: Industry Evaluation</h1>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-500">Equity Research Division</p>
+                    <p class="text-sm font-medium text-gray-600">October 16, 2025</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Tab Navigation -->
+        <div class="border-b border-gray-300">
+            <nav class="flex -mb-px space-x-6 sm:space-x-8" aria-label="Tabs">
+                <button onclick="changeTab('visualizations')" id="tab-visualizations" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 tab-active">
+                    Visualizations
+                </button>
+                <button onclick="changeTab('report')" id="tab-report" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
+                    Analysis Report
+                </button>
+                <button onclick="changeTab('references')" id="tab-references" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
+                    References & Sources
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="mt-8">
+            <!-- Visualizations Content -->
+            <div id="content-visualizations" class="tab-content tab-content-active fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Chart 1 -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Figure 1: OFTO Project Value vs. Year</h3>
+                        <div class="aspect-w-16 aspect-h-9">
+                           <img src="https://placehold.co/600x400/3B82F6/FFFFFF?text=Line+Chart" alt="Placeholder Line Chart" class="w-full h-full object-cover rounded-md bg-gray-200">
+                        </div>
+                        <p class="text-sm text-gray-600 mt-3">Source: Company Filings, Analyst Estimates.</p>
+                    </div>
+                    <!-- Chart 2 -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Figure 2: Market Share by Operator</h3>
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="https://placehold.co/600x400/10B981/FFFFFF?text=Bar+Chart" alt="Placeholder Bar Chart" class="w-full h-full object-cover rounded-md bg-gray-200">
+                        </div>
+                        <p class="text-sm text-gray-600 mt-3">Source: Industry Reports, Regulatory Data.</p>
+                    </div>
+                    <!-- Chart 3 -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Figure 3: Revenue Composition</h3>
+                         <div class="aspect-w-16 aspect-h-9">
+                            <img src="https://placehold.co/600x400/F59E0B/FFFFFF?text=Pie+Chart" alt="Placeholder Pie Chart" class="w-full h-full object-cover rounded-md bg-gray-200">
+                        </div>
+                        <p class="text-sm text-gray-600 mt-3">Source: Internal Financial Models.</p>
+                    </div>
+                     <!-- Chart 4 -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Figure 4: IRR Distribution Across Tenders</h3>
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="https://placehold.co/600x400/8B5CF6/FFFFFF?text=Histogram" alt="Placeholder Histogram" class="w-full h-full object-cover rounded-md bg-gray-200">
+                        </div>
+                        <p class="text-sm text-gray-600 mt-3">Source: Precedent Transaction Analysis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Content -->
+            <div id="content-report" class="tab-content">
+                <div class="bg-white p-6 sm:p-8 rounded-lg shadow prose prose-blue max-w-none">
+                    <!-- Executive Summary -->
+                    <h2 class="text-2xl font-bold border-b pb-2">Executive Summary</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Our analysis indicates a BUY rating with a price target of [Target Price].</p>
+
+                    <!-- Market Overview -->
+                    <h3 class="text-xl font-semibold mt-8">Market Overview & Regulatory Landscape</h3>
+                    <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa.</p>
+
+                    <!-- Financial Analysis -->
+                    <h3 class="text-xl font-semibold mt-8">Financial Analysis & Valuation</h3>
+                    <p>Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis.</p>
+                    <ul>
+                        <li><strong>Base Case Scenario:</strong> Detailed assumptions leading to our valuation.</li>
+                        <li><strong>Bull Case Scenario:</strong> Upside potential based on favorable regulatory changes.</li>
+                        <li><strong>Bear Case Scenario:</strong> Downside risks and potential impact on cash flows.</li>
+                    </ul>
+
+                    <!-- Risk Assessment -->
+                    <h3 class="text-xl font-semibold mt-8">Key Risks</h3>
+                    <p>Aenean lectus elit, fermentum non, convallis id, sagittis at, neque. Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula. Nulla ut felis in purus aliquam imperdiet. Maecenas aliquet mollis lectus. Vivamus consectetuer risus et tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.</p>
+
+                    <!-- Recommendation -->
+                    <h2 class="text-2xl font-bold border-b pb-2 mt-12">Recommendation & Investment Thesis</h2>
+                    <p>Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. We reiterate our BUY rating based on [Key Factor 1], [Key Factor 2], and [Key Factor 3].</p>
+                </div>
+            </div>
+
+            <!-- References Content -->
+            <div id="content-references" class="tab-content">
+                 <div class="bg-white p-8 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-6 border-b pb-2">References & Sources</h2>
+                    <ul class="list-disc list-inside space-y-4 text-gray-700">
+                        <li>
+                            <strong>[Source Name 1]</strong> - "[Title of Publication or Report]," Publisher, Year. Link: <a href="#" class="text-blue-600 hover:underline">[URL]</a>
+                        </li>
+                        <li>
+                            <strong>[Source Name 2]</strong> - "[Title of Article]," Journal of Financial Regulation, Vol. X, Issue Y, pp. 123-456, Date.
+                        </li>
+                         <li>
+                            <strong>[Regulatory Body]</strong> - "Annual Industry Report [Year]," official website. Link: <a href="#" class="text-blue-600 hover:underline">[URL]</a>
+                        </li>
+                        <li>
+                            <strong>[Company Name]</strong> - "Annual Financial Statements [Year]," Investor Relations Portal. Link: <a href="#" class="text-blue-600 hover:underline">[URL]</a>
+                        </li>
+                        <li>
+                            <strong>Internal Analysis</strong> - Financial Models and Projections developed by [Your Firm's Name] Equity Research.
+                        </li>
+                    </ul>
+                 </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white mt-12 border-t">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
+            <p>&copy; 2025 [Your Company Name]. All Rights Reserved.</p>
+            <p class="mt-1">This report is for informational purposes only and does not constitute an offer to sell or a solicitation of an offer to buy any securities.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Store the active tab in a variable
+        let activeTab = 'visualizations';
+
+        function changeTab(tabName) {
+            // Get the old and new tab buttons and content
+            const oldTabButton = document.getElementById(`tab-${activeTab}`);
+            const newTabButton = document.getElementById(`tab-${tabName}`);
+            const oldTabContent = document.getElementById(`content-${activeTab}`);
+            const newTabContent = document.getElementById(`content-${tabName}`);
+
+            // Update button styles
+            oldTabButton.classList.remove('tab-active');
+            newTabButton.classList.add('tab-active');
+
+            // Hide old content and show new content
+            if (oldTabContent) oldTabContent.classList.remove('tab-content-active');
+            if (newTabContent) {
+                newTabContent.classList.add('tab-content-active');
+                // Re-apply animation class to trigger it
+                newTabContent.classList.remove('fade-in');
+                void newTabContent.offsetWidth; // This is a trick to trigger reflow
+                newTabContent.classList.add('fade-in');
+            }
+
+
+            // Update the active tab variable
+            activeTab = tabName;
+        }
+    </script>
+</body>
+</html>
