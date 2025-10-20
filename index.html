@@ -3,52 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OFTO Scheme: Industry Evaluation & Recommendation</title>
+    <title>OFTO Scheme: Has Unbundling Delivered Value</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- D3.js for sophisticated visualizations -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- SheetJS for Excel file reading -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <!-- McKinsey-style professional fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+
     <style>
+        /* McKinsey-style professional typography */
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Lato', sans-serif;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            color: #1a1a1a;
         }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .serif-text {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* McKinsey color palette */
+        :root {
+            --mckinsey-blue: #003d7a;
+            --mckinsey-light-blue: #0073cf;
+            --mckinsey-teal: #00a9ce;
+            --mckinsey-gray: #5f6062;
+            --mckinsey-light-gray: #e6e7e8;
+            --chart-green: #00ab84;
+            --chart-orange: #ff8200;
+            --chart-purple: #6e2c91;
+        }
+
         .tab-active {
-            border-bottom: 2px solid #2563eb;
-            color: #2563eb;
-            font-weight: 600;
+            border-bottom: 3px solid var(--mckinsey-blue);
+            color: var(--mckinsey-blue);
+            font-weight: 700;
         }
+
         .tab-content {
             display: none;
         }
+
         .tab-content-active {
             display: block;
         }
-        /* Simple fade-in animation */
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         .fade-in {
-            animation: fadeIn 0.5s ease-in-out forwards;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Chart containers with McKinsey styling */
+        .chart-container {
+            background: white;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            padding: 32px 24px;
+            min-height: 400px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--mckinsey-blue);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .chart-subtitle {
+            font-size: 13px;
+            color: var(--mckinsey-gray);
+            margin-bottom: 24px;
+            font-weight: 300;
+        }
+
+        /* D3 chart styling */
+        .axis text {
+            font-family: 'Lato', sans-serif;
+            font-size: 11px;
+            fill: var(--mckinsey-gray);
+        }
+
+        .axis line,
+        .axis path {
+            stroke: var(--mckinsey-light-gray);
+            stroke-width: 1px;
+        }
+
+        .grid line {
+            stroke: var(--mckinsey-light-gray);
+            stroke-opacity: 0.5;
+            stroke-width: 1px;
+        }
+
+        /* Report styling - McKinsey pyramid principle */
+        .insight-box {
+            background: #f8f9fa;
+            border-left: 4px solid var(--mckinsey-blue);
+            padding: 20px 24px;
+            margin: 24px 0;
+            font-weight: 400;
+        }
+
+        .key-message {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--mckinsey-blue);
+            line-height: 1.5;
+        }
+
+        .supporting-point {
+            margin-left: 24px;
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .supporting-point::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--mckinsey-blue);
+            font-weight: 700;
+        }
+
+        /* File upload section */
+        .upload-section {
+            background: linear-gradient(135deg, var(--mckinsey-blue) 0%, var(--mckinsey-light-blue) 100%);
+            border-radius: 4px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 32px;
+            color: white;
+        }
+
+        .upload-btn {
+            background: white;
+            color: var(--mckinsey-blue);
+            padding: 12px 32px;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 14px;
+            letter-spacing: 0.02em;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .data-status {
+            font-size: 13px;
+            margin-top: 16px;
+            opacity: 0.9;
         }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-    <div class="bg-white shadow-md">
+    <!-- Header -->
+    <div class="bg-white border-b-2" style="border-color: var(--mckinsey-blue);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-4">
-                     <div class="bg-blue-600 p-2 rounded-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                    </div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">OFTO Scheme: Industry Evaluation</h1>
+            <div class="flex justify-between items-center py-6">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold" style="color: var(--mckinsey-blue);">OFTO Scheme Analysis</h1>
+                    <p class="text-sm mt-1" style="color: var(--mckinsey-gray); font-weight: 300;">Has Unbundling Delivered Value</p>
                 </div>
                 <div class="text-right">
-                    <p class="text-sm text-gray-500">Equity Research Division</p>
-                    <p class="text-sm font-medium text-gray-600">October 16, 2025</p>
+                    <p class="text-xs uppercase tracking-wide" style="color: var(--mckinsey-gray); font-weight: 700;">Opinion Piece</p>
+                    <p class="text-sm font-light mt-1" style="color: var(--mckinsey-gray);">October 2025</p>
                 </div>
             </div>
         </div>
@@ -62,7 +205,7 @@
                     Visualizations
                 </button>
                 <button onclick="changeTab('report')" id="tab-report" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
-                    Analysis Report
+                    Analysis
                 </button>
                 <button onclick="changeTab('references')" id="tab-references" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
                     References & Sources
@@ -74,69 +217,332 @@
         <div class="mt-8">
             <!-- Visualizations Content -->
             <div id="content-visualizations" class="tab-content tab-content-active fade-in">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Chart 1 -->
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Figure 1: OFTO Project Value vs. Year</h3>
-                        <div class="aspect-w-16 aspect-h-9">
-                           <img src="https://placehold.co/600x400/3B82F6/FFFFFF?text=Line+Chart" alt="Placeholder Line Chart" class="w-full h-full object-cover rounded-md bg-gray-200">
-                        </div>
-                        <p class="text-sm text-gray-600 mt-3">Source: Company Filings, Analyst Estimates.</p>
+                <!-- Data Upload Section -->
+                <div class="upload-section">
+                    <h2 class="text-xl font-bold mb-3">Secure Data Loading</h2>
+                    <p class="text-sm mb-6 opacity-90">Upload your Excel database file. All data processing occurs locally in your browser - no data is transmitted to any server.</p>
+                    <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleFileUpload(event)">
+                    <label for="excelFileInput" class="upload-btn inline-block">SELECT EXCEL FILE</label>
+                    <div id="dataStatus" class="data-status"></div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Chart 1: Ownership Concentration -->
+                    <div class="chart-container">
+                        <div class="chart-title">OFTO ownership concentration</div>
+                        <div class="chart-subtitle">Market share by transmission owner (%)</div>
+                        <div id="chart1"></div>
+                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: Ofgem, industry filings</p>
                     </div>
-                    <!-- Chart 2 -->
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Figure 2: Market Share by Operator</h3>
-                        <div class="aspect-w-16 aspect-h-9">
-                            <img src="https://placehold.co/600x400/10B981/FFFFFF?text=Bar+Chart" alt="Placeholder Bar Chart" class="w-full h-full object-cover rounded-md bg-gray-200">
+
+                    <!-- Chart 2: Ownership Capacity -->
+                    <div class="chart-container">
+                        <div class="chart-title">OFTO capacity by owner</div>
+                        <div class="chart-subtitle">Total transmission capacity (MW)</div>
+                        <div id="chart2"></div>
+                        <p class="text-xs mt-4 mb-3" style="color: var(--mckinsey-gray);">Source: Ofgem, industry filings; capacity adjusted to ownership stake</p>
+                        <div class="p-3 mt-2 rounded" style="background-color: #f0f4f8; border-left: 3px solid var(--mckinsey-blue);">
+                            <p class="text-sm" style="color: var(--mckinsey-gray); font-weight: 500;">Diamond Transmission Partners and Transmission Capital Partners dominate with ~69% of total capacity combined.</p>
                         </div>
-                        <p class="text-sm text-gray-600 mt-3">Source: Industry Reports, Regulatory Data.</p>
                     </div>
-                    <!-- Chart 3 -->
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Figure 3: Revenue Composition</h3>
-                         <div class="aspect-w-16 aspect-h-9">
-                            <img src="https://placehold.co/600x400/F59E0B/FFFFFF?text=Pie+Chart" alt="Placeholder Pie Chart" class="w-full h-full object-cover rounded-md bg-gray-200">
-                        </div>
-                        <p class="text-sm text-gray-600 mt-3">Source: Internal Financial Models.</p>
+
+                    <!-- Chart 3: Waterfall Chart -->
+                    <div class="chart-container">
+                        <div class="chart-title">Revenue Composition Analysis</div>
+                        <div class="chart-subtitle">Breakdown of annual revenue streams (£ million)</div>
+                        <div id="chart3"></div>
+                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: Financial models, market data</p>
                     </div>
-                     <!-- Chart 4 -->
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Figure 4: IRR Distribution Across Tenders</h3>
-                        <div class="aspect-w-16 aspect-h-9">
-                            <img src="https://placehold.co/600x400/8B5CF6/FFFFFF?text=Histogram" alt="Placeholder Histogram" class="w-full h-full object-cover rounded-md bg-gray-200">
-                        </div>
-                        <p class="text-sm text-gray-600 mt-3">Source: Precedent Transaction Analysis.</p>
+
+                    <!-- Chart 4: Distribution Chart -->
+                    <div class="chart-container">
+                        <div class="chart-title">IRR Distribution Across Tenders</div>
+                        <div class="chart-subtitle">Internal rate of return by project (%)</div>
+                        <div id="chart4"></div>
+                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: Precedent transaction analysis</p>
                     </div>
                 </div>
             </div>
 
             <!-- Report Content -->
             <div id="content-report" class="tab-content">
-                <div class="bg-white p-6 sm:p-8 rounded-lg shadow prose prose-blue max-w-none">
-                    <!-- Executive Summary -->
-                    <h2 class="text-2xl font-bold border-b pb-2">Executive Summary</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Our analysis indicates a BUY rating with a price target of [Target Price].</p>
+                <!-- Report Header Box - Full Width -->
+                <div class="upload-section mb-8">
+                    <h2 class="text-2xl font-bold mb-3">OFTO Scheme Infographic Deep Dive</h2>
 
-                    <!-- Market Overview -->
-                    <h3 class="text-xl font-semibold mt-8">Market Overview & Regulatory Landscape</h3>
-                    <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa.</p>
+                    <!-- Three Interactive Boxes -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <!-- First Box: Overview -->
+                        <div onclick="openOverview()" class="bg-white p-4 rounded cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5" style="border: 2px solid var(--mckinsey-blue);">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <svg class="w-6 h-6 mr-2" style="color: var(--mckinsey-blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                    </svg>
+                                    <h3 class="text-base font-bold" style="color: var(--mckinsey-blue);">Overview</h3>
+                                </div>
+                                <svg class="w-5 h-5" style="color: var(--mckinsey-blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                            <p class="text-xs mt-2" style="color: var(--mckinsey-gray);">OFTO scheme summary</p>
+                        </div>
+
+                        <!-- Second Box: Key Regulatory Milestones -->
+                        <div onclick="openRegulatoryMilestones()" class="bg-white p-4 rounded cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5" style="border: 2px solid var(--mckinsey-blue);">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <svg class="w-6 h-6 mr-2" style="color: var(--mckinsey-blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <h3 class="text-base font-bold" style="color: var(--mckinsey-blue);">Key Regulatory Milestones</h3>
+                                </div>
+                                <svg class="w-5 h-5" style="color: var(--mckinsey-blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                            <p class="text-xs mt-2" style="color: var(--mckinsey-gray);">2004-2025 timeline</p>
+                        </div>
+
+                        <!-- Third Box: OFTO Tender Process -->
+                        <div onclick="openTenderProcess()" class="bg-white p-4 rounded cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5" style="border: 2px solid var(--mckinsey-blue);">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <svg class="w-6 h-6 mr-2" style="color: var(--mckinsey-blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <h3 class="text-base font-bold" style="color: var(--mckinsey-blue);">OFTO Tender Process</h3>
+                                </div>
+                                <svg class="w-5 h-5" style="color: var(--mckinsey-blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                            <p class="text-xs mt-2" style="color: var(--mckinsey-gray);">6-stage competitive process</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Overlay for Tender Process -->
+                <div id="tenderProcessModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 overflow-y-auto" style="-webkit-overflow-scrolling: touch;">
+                    <div class="min-h-screen p-4 pt-8">
+                        <div class="bg-white rounded-lg shadow-2xl w-full max-w-6xl mx-auto mb-8">
+                            <!-- Modal Header - Sticky -->
+                            <div class="sticky top-0 z-10 flex justify-between items-center p-6 border-b" style="background: linear-gradient(135deg, var(--mckinsey-blue) 0%, var(--mckinsey-light-blue) 100%);">
+                                <h2 class="text-2xl font-bold text-white">The Competitive Tender Process</h2>
+                                <button onclick="closeTenderProcess()" class="text-white hover:text-gray-200 text-3xl font-bold leading-none">&times;</button>
+                            </div>
+
+                            <!-- Modal Content -->
+                            <div id="tenderProcessContent" class="p-8" style="background-color: #f7f9fc;">
+                                <!-- Content will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Overlay for Overview -->
+                <div id="overviewModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 overflow-y-auto" style="-webkit-overflow-scrolling: touch;">
+                    <div class="min-h-screen p-4 pt-8">
+                        <div class="bg-white rounded-lg shadow-2xl w-full max-w-6xl mx-auto mb-8">
+                            <!-- Modal Header - Sticky -->
+                            <div class="sticky top-0 z-10 flex justify-between items-center p-6 border-b" style="background: linear-gradient(135deg, var(--mckinsey-blue) 0%, var(--mckinsey-light-blue) 100%);">
+                                <h2 class="text-2xl font-bold text-white">OFTO Scheme Overview</h2>
+                                <button onclick="closeOverview()" class="text-white hover:text-gray-200 text-3xl font-bold leading-none">&times;</button>
+                            </div>
+
+                            <!-- Modal Content -->
+                            <div id="overviewContent" class="p-8" style="background-color: #f7f9fc;">
+                                <!-- Content will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Overlay for Regulatory Milestones -->
+                <div id="regulatoryMilestonesModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 overflow-y-auto" style="-webkit-overflow-scrolling: touch;">
+                    <div class="min-h-screen p-4 pt-8">
+                        <div class="bg-white rounded-lg shadow-2xl w-full max-w-6xl mx-auto mb-8">
+                            <!-- Modal Header - Sticky -->
+                            <div class="sticky top-0 z-10 flex justify-between items-center p-6 border-b" style="background: linear-gradient(135deg, var(--mckinsey-blue) 0%, var(--mckinsey-light-blue) 100%);">
+                                <h2 class="text-2xl font-bold text-white">Key Regulatory Milestones</h2>
+                                <button onclick="closeRegulatoryMilestones()" class="text-white hover:text-gray-200 text-3xl font-bold leading-none">&times;</button>
+                            </div>
+
+                            <!-- Modal Content -->
+                            <div id="regulatoryMilestonesContent" class="p-8" style="background-color: #f7f9fc;">
+                                <!-- Content will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 sm:p-12 rounded-sm shadow-sm" style="max-width: 900px; margin: 0 auto;">
+                    <!-- Background -->
+                    <h2 class="text-2xl font-bold mb-6" style="color: var(--mckinsey-blue); border-bottom: 3px solid var(--mckinsey-blue); padding-bottom: 12px;">1. Background</h2>
+
+                    <!-- 1.1 Foundation and Regulatory Framework -->
+                    <h3 class="text-lg font-bold mb-4 mt-8" style="color: var(--mckinsey-blue);">1.1. Foundation and regulatory framework</h3>
+
+                    <p class="mb-4 leading-relaxed">The Offshore Transmission Owner (OFTO) regime was introduced in 2009 to govern private investment in high-voltage transmission assets connecting offshore wind generation to the national electricity grid. The Department for Energy and Climate Change and the Gas and Electricity Markets Authority (Ofgem) developed the regime jointly.</p>
+
+                    <p class="mb-4 leading-relaxed">The regime addresses four objectives: securing electricity supply, accelerating decarbonisation, minimising consumer costs, and delivering resilient transmission infrastructure. It manages upfront financial risk in offshore transmission development.</p>
+
+                    <div class="p-6 bg-gray-50 rounded-sm mb-6 border-l-4" style="border-color: var(--mckinsey-blue);">
+                        <h4 class="font-bold mb-3" style="color: var(--mckinsey-blue);">Legislative Framework</h4>
+
+                        <p class="mb-3 text-sm"><strong>Electricity Act 1989:</strong> Established licensing requirements for electricity transmission, extended to offshore assets.</p>
+
+                        <p class="mb-3 text-sm"><strong>Energy Act 2004:</strong> Inserted section 6C into the Electricity Act, enabling competitive tenders for offshore transmission licences.</p>
+
+                        <p class="text-sm"><strong>Electricity (Competitive Tenders for Offshore Transmission Licences) Regulations 2015:</strong> Governs the operational tender process for OFTO licence awards.</p>
+                    </div>
+
+                    <!-- 1.2 Ofgem's Objectives -->
+                    <h3 class="text-lg font-bold mb-4 mt-8" style="color: var(--mckinsey-blue);">1.2. Ofgem's objectives for the OFTO regime</h3>
+
+                    <div class="p-6 mb-6 rounded-sm border-l-4" style="background-color: #f8f9fa; border-color: var(--mckinsey-teal);">
+                        <p class="mb-3 leading-relaxed italic text-sm" style="color: var(--mckinsey-gray);">The key objectives of the competitive tender process are:</p>
+
+                        <div class="ml-4 space-y-3">
+                            <div class="flex items-start">
+                                <span class="font-bold mr-3" style="color: var(--mckinsey-blue);">(i)</span>
+                                <p class="leading-relaxed text-sm">Deliver transmission infrastructure to connect offshore generation, on a timely basis and ensure that OFTOs are robust and can deliver Transmission Services successfully over the licence period;</p>
+                            </div>
+
+                            <div class="flex items-start">
+                                <span class="font-bold mr-3" style="color: var(--mckinsey-blue);">(ii)</span>
+                                <p class="leading-relaxed text-sm">Provide certainty and best value to consumers though the competitive tender process; and</p>
+                            </div>
+
+                            <div class="flex items-start">
+                                <span class="font-bold mr-3" style="color: var(--mckinsey-blue);">(iii)</span>
+                                <p class="leading-relaxed text-sm">Attract new entrants to the transmission sector.</p>
+                            </div>
+                        </div>
+
+                        <p class="mt-4 text-xs" style="color: var(--mckinsey-gray);"><em>Source: Ofgem</em></p>
+                    </div>
+
+                    <!-- 1.3 The Authority's Role -->
+                    <h3 class="text-lg font-bold mb-4 mt-8" style="color: var(--mckinsey-blue);">1.3. The Authority's role: mandate and mechanism</h3>
+
+                    <p class="mb-6 leading-relaxed">Ofgem designs, implements, and administers the OFTO framework. It acts under statutory duties to protect consumer interests, promote competition, and ensure efficient energy infrastructure.</p>
+
+                    <!-- Statutory Mandate -->
+                    <h4 class="text-base font-bold mb-3 mt-6" style="color: var(--mckinsey-blue);">1.3.1. Statutory mandate</h4>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="p-4 bg-blue-50 rounded border-l-4" style="border-color: var(--mckinsey-blue);">
+                            <h5 class="font-bold mb-1 text-sm" style="color: var(--mckinsey-blue);">Consumer Protection</h5>
+                            <p class="text-sm">Statutory duty to maximise green energy deployment while securing best value for consumers.</p>
+                        </div>
+
+                        <div class="p-4 bg-blue-50 rounded border-l-4" style="border-color: var(--mckinsey-blue);">
+                            <h5 class="font-bold mb-1 text-sm" style="color: var(--mckinsey-blue);">Licensing Authority</h5>
+                            <p class="text-sm">Powers under Energy Act 2004 to award offshore transmission licences via competitive tender.</p>
+                        </div>
+
+                        <div class="p-4 bg-blue-50 rounded border-l-4" style="border-color: var(--mckinsey-blue);">
+                            <h5 class="font-bold mb-1 text-sm" style="color: var(--mckinsey-blue);">Enforcement</h5>
+                            <p class="text-sm">Monitoring and enforcement of licence conditions and regulatory compliance.</p>
+                        </div>
+                    </div>
+
+                    <!-- Regime Implementation -->
+                    <h4 class="text-base font-bold mb-3 mt-6" style="color: var(--mckinsey-blue);">1.3.2. Regime implementation</h4>
+
+                    <div class="mb-6 space-y-3">
+                        <div>
+                            <h5 class="font-semibold mb-1 text-sm" style="color: var(--mckinsey-blue);">Competitive Tendering</h5>
+                            <p class="text-sm">Multi-stage tender process (EPQ, ITT, PB, SB) to appoint licensees. Winner selected by lowest Tender Revenue Stream (TRS).</p>
+                        </div>
+
+                        <div>
+                            <h5 class="font-semibold mb-1 text-sm" style="color: var(--mckinsey-blue);">Price Control</h5>
+                            <p class="text-sm">TRS incorporated into 25-year licence as regulated annual revenue.</p>
+                        </div>
+
+                        <div>
+                            <h5 class="font-semibold mb-1 text-sm" style="color: var(--mckinsey-blue);">Asset Valuation (FTV)</h5>
+                            <p class="text-sm">Determines Final Transfer Value for transitional projects based on economic and efficient costs. Actively disallows inefficient expenditure.</p>
+                        </div>
+
+                        <div>
+                            <h5 class="font-semibold mb-1 text-sm" style="color: var(--mckinsey-blue);">Tender Management</h5>
+                            <p class="text-sm">Manages tender process, subject to delays from construction-stage technical and commercial issues.</p>
+                        </div>
+                    </div>
 
                     <!-- Financial Analysis -->
-                    <h3 class="text-xl font-semibold mt-8">Financial Analysis & Valuation</h3>
-                    <p>Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis.</p>
-                    <ul>
-                        <li><strong>Base Case Scenario:</strong> Detailed assumptions leading to our valuation.</li>
-                        <li><strong>Bull Case Scenario:</strong> Upside potential based on favorable regulatory changes.</li>
-                        <li><strong>Bear Case Scenario:</strong> Downside risks and potential impact on cash flows.</li>
-                    </ul>
+                    <h2 class="text-2xl font-bold mt-12 mb-6" style="color: var(--mckinsey-blue); border-bottom: 3px solid var(--mckinsey-blue); padding-bottom: 12px;">2. Financial analysis and valuation</h2>
+
+                    <h3 class="text-lg font-bold mb-4" style="color: var(--mckinsey-blue);">2.1. Scenario analysis</h3>
+
+                    <div class="mb-6">
+                        <div class="flex items-start mb-4 p-4 bg-green-50 rounded border-l-4" style="border-color: var(--chart-green);">
+                            <div class="flex-1">
+                                <h4 class="font-bold mb-2" style="color: var(--chart-green);">Bull Case: IRR 10-12%</h4>
+                                <p class="text-sm leading-relaxed">Accelerated offshore wind deployment drives multiple competitive tenders; favorable regulatory reviews enhance allowed returns; institutional capital scarcity supports pricing discipline</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start mb-4 p-4 bg-blue-50 rounded border-l-4" style="border-color: var(--mckinsey-light-blue);">
+                            <div class="flex-1">
+                                <h4 class="font-bold mb-2" style="color: var(--mckinsey-light-blue);">Base Case: IRR 8-10%</h4>
+                                <p class="text-sm leading-relaxed">Stable tender pipeline maintains competitive but rational bidding; regulatory framework continues with minor adjustments; moderate inflation supports real return preservation</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start mb-4 p-4 bg-orange-50 rounded border-l-4" style="border-color: var(--chart-orange);">
+                            <div class="flex-1">
+                                <h4 class="font-bold mb-2" style="color: var(--chart-orange);">Bear Case: IRR 6-8%</h4>
+                                <p class="text-sm leading-relaxed">Delayed offshore wind projects reduce tender frequency; increased competition from infrastructure funds compresses returns; regulatory pressure on allowed returns</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Risk Assessment -->
-                    <h3 class="text-xl font-semibold mt-8">Key Risks</h3>
-                    <p>Aenean lectus elit, fermentum non, convallis id, sagittis at, neque. Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula. Nulla ut felis in purus aliquam imperdiet. Maecenas aliquet mollis lectus. Vivamus consectetuer risus et tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.</p>
+                    <h3 class="text-lg font-bold mb-4 mt-8" style="color: var(--mckinsey-blue);">2.2. Risk assessment</h3>
 
-                    <!-- Recommendation -->
-                    <h2 class="text-2xl font-bold border-b pb-2 mt-12">Recommendation & Investment Thesis</h2>
-                    <p>Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. We reiterate our BUY rating based on [Key Factor 1], [Key Factor 2], and [Key Factor 3].</p>
+                    <div class="space-y-4 mb-8">
+                        <div class="p-4 border-l-4" style="border-color: var(--chart-orange); background-color: #fff9f5;">
+                            <h4 class="font-bold mb-2" style="color: var(--chart-orange);">Regulatory Risk (Medium)</h4>
+                            <p class="text-sm leading-relaxed">Potential for adverse regulatory reviews affecting allowed returns; mitigated by strong political support for renewable infrastructure and 20-year revenue agreements</p>
+                        </div>
+
+                        <div class="p-4 border-l-4" style="border-color: var(--chart-orange); background-color: #fff9f5;">
+                            <h4 class="font-bold mb-2" style="color: var(--chart-orange);">Operational Risk (Low-Medium)</h4>
+                            <p class="text-sm leading-relaxed">Asset performance and maintenance cost uncertainty; managed through comprehensive O&M contracts and availability incentive mechanisms</p>
+                        </div>
+
+                        <div class="p-4 border-l-4" style="border-color: var(--mckinsey-gray); background-color: #f9f9f9;">
+                            <h4 class="font-bold mb-2" style="color: var(--mckinsey-gray);">Market Risk (Low)</h4>
+                            <p class="text-sm leading-relaxed">Competition intensity affecting future tender pricing; offset by high barriers to entry and limited qualified bidder universe</p>
+                        </div>
+                    </div>
+
+                    <!-- Investment Thesis -->
+                    <h2 class="text-2xl font-bold mt-12 mb-6" style="color: var(--mckinsey-blue); border-bottom: 3px solid var(--mckinsey-blue); padding-bottom: 12px;">3. Investment thesis</h2>
+
+                    <div class="mb-6 p-8 rounded" style="background: linear-gradient(135deg, var(--mckinsey-blue) 0%, var(--mckinsey-light-blue) 100%); color: white;">
+                        <h3 class="text-xl font-bold mb-4">Recommendation: BUY</h3>
+                        <p class="text-base mb-4 leading-relaxed">We recommend pursuing OFTO investment opportunities. The recommendation is based on superior risk-adjusted returns, regulatory stability, and strategic alignment with energy transition themes.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold mb-1">8-10%</div>
+                                <div class="text-sm opacity-90">Target IRR</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold mb-1">20 years</div>
+                                <div class="text-sm opacity-90">Revenue Duration</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold mb-1">£60bn</div>
+                                <div class="text-sm opacity-90">Market Pipeline</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -174,33 +580,1065 @@
     </footer>
 
     <script>
-        // Store the active tab in a variable
+        // ===== GLOBAL STATE MANAGEMENT =====
         let activeTab = 'visualizations';
+        let excelData = null;  // Stores parsed Excel data (stays local, never transmitted)
+        let visualizationData = null;  // Filtered data for charts
 
+        // McKinsey color palette
+        const colors = {
+            blue: '#003d7a',
+            lightBlue: '#0073cf',
+            teal: '#00a9ce',
+            green: '#00ab84',
+            orange: '#ff8200',
+            purple: '#6e2c91',
+            gray: '#5f6062',
+            lightGray: '#e6e7e8'
+        };
+
+        // ===== TAB NAVIGATION =====
         function changeTab(tabName) {
-            // Get the old and new tab buttons and content
             const oldTabButton = document.getElementById(`tab-${activeTab}`);
             const newTabButton = document.getElementById(`tab-${tabName}`);
             const oldTabContent = document.getElementById(`content-${activeTab}`);
             const newTabContent = document.getElementById(`content-${tabName}`);
 
-            // Update button styles
             oldTabButton.classList.remove('tab-active');
             newTabButton.classList.add('tab-active');
 
-            // Hide old content and show new content
             if (oldTabContent) oldTabContent.classList.remove('tab-content-active');
             if (newTabContent) {
                 newTabContent.classList.add('tab-content-active');
-                // Re-apply animation class to trigger it
                 newTabContent.classList.remove('fade-in');
-                void newTabContent.offsetWidth; // This is a trick to trigger reflow
+                void newTabContent.offsetWidth;
                 newTabContent.classList.add('fade-in');
             }
 
-
-            // Update the active tab variable
             activeTab = tabName;
+        }
+
+        // ===== SECURE DATA HANDLING =====
+        // All data processing happens in browser - nothing sent to server
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+
+                    // Store raw Excel data locally
+                    excelData = {};
+                    workbook.SheetNames.forEach(sheetName => {
+                        excelData[sheetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                    });
+
+                    // Process data for visualizations
+                    processDataForVisualizations();
+
+                    // Update status
+                    document.getElementById('dataStatus').innerHTML =
+                        `<span style="color: #00ab84;">✓ Data loaded successfully</span> (${workbook.SheetNames.length} sheets, ${Object.values(excelData).reduce((acc, sheet) => acc + sheet.length, 0)} rows)`;
+
+                    // Render charts
+                    renderAllCharts();
+                } catch (error) {
+                    document.getElementById('dataStatus').innerHTML =
+                        `<span style="color: #ff8200;">⚠ Error loading file: ${error.message}</span>`;
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // ===== DATA PROCESSING LAYER =====
+        // Filter and transform data - only expose what's needed for visualization
+        function processDataForVisualizations() {
+            // This function processes your Excel data
+            // Customize based on your actual Excel structure
+            visualizationData = {
+                ownershipData: extractOwnershipData(),
+                marketShareData: extractMarketShareData(),
+                revenueData: extractRevenueData(),
+                irrData: extractIRRData()
+            };
+        }
+
+        // Example data extraction functions - customize these based on your Excel structure
+        function extractOwnershipData() {
+            // Look for sheet with ownership data
+            if (excelData && excelData['Ownership']) {
+                return excelData['Ownership'];
+            }
+            // Return OFTO ownership distribution data
+            return [
+                {owner: 'Diamond Transmission Partners', capacity: 4375, capacityAdjusted: 4375},
+                {owner: 'Transmission Capital Partners', capacity: 4072, capacityAdjusted: 4072},
+                {owner: 'Equitix', capacity: 504, capacityAdjusted: 1659.2},
+                {owner: 'Blue Transmission', capacity: 1313, capacityAdjusted: 1313},
+                {owner: 'Balfour Beatty Capital', capacity: 219, capacityAdjusted: 623.4},
+                {owner: 'WoDS Transmission Plc', capacity: 388, capacityAdjusted: 388},
+                {owner: 'TEPCO', capacity: 0, capacityAdjusted: 171.4}
+            ];
+        }
+
+        function extractMarketShareData() {
+            if (excelData && excelData['MarketShare']) {
+                return excelData['MarketShare'];
+            }
+            return [
+                {operator: 'Operator A', share: 28},
+                {operator: 'Operator B', share: 24},
+                {operator: 'Operator C', share: 18},
+                {operator: 'Operator D', share: 15},
+                {operator: 'Others', share: 15}
+            ];
+        }
+
+        function extractRevenueData() {
+            if (excelData && excelData['Revenue']) {
+                return excelData['Revenue'];
+            }
+            return [
+                {category: 'Base Revenue', value: 120},
+                {category: 'Availability Bonus', value: 25},
+                {category: 'Inflation Adj.', value: 18},
+                {category: 'Other Income', value: 8}
+            ];
+        }
+
+        function extractIRRData() {
+            if (excelData && excelData['IRR']) {
+                return excelData['IRR'];
+            }
+            return [
+                {project: 'P1', irr: 8.2}, {project: 'P2', irr: 9.1},
+                {project: 'P3', irr: 7.8}, {project: 'P4', irr: 10.2},
+                {project: 'P5', irr: 8.9}, {project: 'P6', irr: 9.5},
+                {project: 'P7', irr: 8.4}, {project: 'P8', irr: 9.8},
+                {project: 'P9', irr: 8.1}, {project: 'P10', irr: 9.3}
+            ];
+        }
+
+        // ===== D3.JS VISUALIZATION FUNCTIONS =====
+
+        function renderAllCharts() {
+            renderChart1();  // Line chart
+            renderChart2();  // Bar chart
+            renderChart3();  // Waterfall chart
+            renderChart4();  // Distribution chart
+        }
+
+        // Chart 1: OFTO Ownership Concentration (Percentage Bar Chart)
+        function renderChart1() {
+            const container = document.getElementById('chart1');
+            container.innerHTML = '';
+
+            const margin = {top: 20, right: 40, bottom: 40, left: 180};
+            const width = container.offsetWidth - margin.left - margin.right;
+            const height = 360 - margin.top - margin.bottom;
+
+            const svg = d3.select('#chart1')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+
+            const data = visualizationData?.ownershipData || extractOwnershipData();
+
+            // Calculate total and percentages
+            const total = d3.sum(data, d => d.capacityAdjusted);
+            const dataWithPercentages = data.map(d => ({
+                owner: d.owner,
+                percentage: (d.capacityAdjusted / total) * 100,
+                capacity: d.capacityAdjusted
+            }));
+
+            // Sort by percentage descending
+            const sortedData = dataWithPercentages.sort((a, b) => b.percentage - a.percentage);
+
+            // Scales
+            const x = d3.scaleLinear()
+                .domain([0, 100])
+                .range([0, width]);
+
+            const y = d3.scaleBand()
+                .domain(sortedData.map(d => d.owner))
+                .range([0, height])
+                .padding(0.25);
+
+            // Bars
+            svg.selectAll('.bar')
+                .data(sortedData)
+                .enter()
+                .append('rect')
+                .attr('class', 'bar')
+                .attr('x', 0)
+                .attr('y', d => y(d.owner))
+                .attr('width', d => x(d.percentage))
+                .attr('height', y.bandwidth())
+                .attr('fill', colors.blue)
+                .attr('rx', 2);
+
+            // Percentage labels on bars
+            svg.selectAll('.label')
+                .data(sortedData)
+                .enter()
+                .append('text')
+                .attr('x', d => x(d.percentage) - 8)
+                .attr('y', d => y(d.owner) + y.bandwidth() / 2)
+                .attr('dy', '.35em')
+                .attr('text-anchor', 'end')
+                .attr('font-size', '12px')
+                .attr('font-weight', '700')
+                .attr('fill', 'white')
+                .text(d => `${d.percentage.toFixed(1)}%`);
+
+            // Y-axis (owner names)
+            svg.append('g')
+                .attr('class', 'axis')
+                .call(d3.axisLeft(y))
+                .selectAll('text')
+                .style('font-size', '11px')
+                .style('font-weight', '400');
+
+            // X-axis
+            svg.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d}%`));
+
+            // Remove axis lines for cleaner look
+            svg.selectAll('.axis path').remove();
+            svg.selectAll('.axis line').attr('stroke', colors.lightGray);
+        }
+
+        // Chart 2: OFTO Capacity by Owner (McKinsey-style Bar Chart)
+        function renderChart2() {
+            const container = document.getElementById('chart2');
+            container.innerHTML = '';
+
+            const margin = {top: 20, right: 80, bottom: 40, left: 180};
+            const width = container.offsetWidth - margin.left - margin.right;
+            const height = 360 - margin.top - margin.bottom;
+
+            const svg = d3.select('#chart2')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+
+            const data = visualizationData?.ownershipData || extractOwnershipData();
+
+            // Sort by adjusted capacity descending
+            const sortedData = data.sort((a, b) => b.capacityAdjusted - a.capacityAdjusted);
+
+            // Scales
+            const x = d3.scaleLinear()
+                .domain([0, d3.max(sortedData, d => d.capacityAdjusted) * 1.15])
+                .range([0, width]);
+
+            const y = d3.scaleBand()
+                .domain(sortedData.map(d => d.owner))
+                .range([0, height])
+                .padding(0.25);
+
+            // Color scale - gradient from dark to light blue
+            const colorScale = d3.scaleOrdinal()
+                .domain(sortedData.map((d, i) => i))
+                .range([colors.blue, colors.lightBlue, colors.teal, colors.green, '#87CEEB', colors.orange, colors.lightGray]);
+
+            // Bars with gradient effect
+            svg.selectAll('.bar')
+                .data(sortedData)
+                .enter()
+                .append('rect')
+                .attr('class', 'bar')
+                .attr('x', 0)
+                .attr('y', d => y(d.owner))
+                .attr('width', d => x(d.capacityAdjusted))
+                .attr('height', y.bandwidth())
+                .attr('fill', (d, i) => colorScale(i))
+                .attr('rx', 3);
+
+            // Value labels outside bars
+            svg.selectAll('.label')
+                .data(sortedData)
+                .enter()
+                .append('text')
+                .attr('x', d => x(d.capacityAdjusted) + 5)
+                .attr('y', d => y(d.owner) + y.bandwidth() / 2)
+                .attr('dy', '.35em')
+                .attr('font-size', '11px')
+                .attr('font-weight', '700')
+                .attr('fill', colors.gray)
+                .text(d => {
+                    if (d.capacityAdjusted >= 1000) {
+                        return `${(d.capacityAdjusted / 1000).toFixed(1)} GW`;
+                    }
+                    return `${d.capacityAdjusted.toFixed(0)} MW`;
+                });
+
+            // Y-axis (owner names)
+            svg.append('g')
+                .attr('class', 'axis')
+                .call(d3.axisLeft(y))
+                .selectAll('text')
+                .style('font-size', '11px')
+                .style('font-weight', '400');
+
+            // X-axis
+            svg.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x).ticks(5).tickFormat(d => {
+                    if (d >= 1000) return `${(d / 1000).toFixed(1)} GW`;
+                    return `${d} MW`;
+                }));
+
+            // Remove axis lines for cleaner McKinsey look
+            svg.selectAll('.axis path').remove();
+            svg.selectAll('.axis line').attr('stroke', colors.lightGray);
+        }
+
+        // Chart 3: Waterfall Chart
+        function renderChart3() {
+            const container = document.getElementById('chart3');
+            container.innerHTML = '';
+
+            const margin = {top: 20, right: 30, bottom: 60, left: 60};
+            const width = container.offsetWidth - margin.left - margin.right;
+            const height = 320 - margin.top - margin.bottom;
+
+            const svg = d3.select('#chart3')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+
+            const data = visualizationData?.revenueData || extractRevenueData();
+
+            // Calculate cumulative values
+            let cumulative = 0;
+            const waterfallData = data.map((d, i) => {
+                const start = cumulative;
+                cumulative += d.value;
+                return {
+                    category: d.category,
+                    value: d.value,
+                    start: start,
+                    end: cumulative
+                };
+            });
+
+            // Scales
+            const x = d3.scaleBand()
+                .domain(data.map(d => d.category))
+                .range([0, width])
+                .padding(0.3);
+
+            const y = d3.scaleLinear()
+                .domain([0, cumulative * 1.1])
+                .range([height, 0]);
+
+            // Bars
+            svg.selectAll('.bar')
+                .data(waterfallData)
+                .enter()
+                .append('rect')
+                .attr('class', 'bar')
+                .attr('x', d => x(d.category))
+                .attr('y', d => y(d.end))
+                .attr('width', x.bandwidth())
+                .attr('height', d => y(d.start) - y(d.end))
+                .attr('fill', (d, i) => [colors.blue, colors.green, colors.teal, colors.orange][i % 4]);
+
+            // Connectors
+            waterfallData.forEach((d, i) => {
+                if (i < waterfallData.length - 1) {
+                    svg.append('line')
+                        .attr('x1', x(d.category) + x.bandwidth())
+                        .attr('x2', x(waterfallData[i + 1].category))
+                        .attr('y1', y(d.end))
+                        .attr('y2', y(d.end))
+                        .attr('stroke', colors.lightGray)
+                        .attr('stroke-width', 1)
+                        .attr('stroke-dasharray', '3,3');
+                }
+            });
+
+            // Value labels
+            svg.selectAll('.label')
+                .data(waterfallData)
+                .enter()
+                .append('text')
+                .attr('x', d => x(d.category) + x.bandwidth() / 2)
+                .attr('y', d => y(d.end) - 5)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '11px')
+                .attr('font-weight', '700')
+                .attr('fill', colors.gray)
+                .text(d => `£${d.value}m`);
+
+            // Axes
+            svg.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x))
+                .selectAll('text')
+                .attr('transform', 'rotate(-15)')
+                .style('text-anchor', 'end');
+
+            svg.append('g')
+                .attr('class', 'axis')
+                .call(d3.axisLeft(y).ticks(5).tickFormat(d => `£${d}m`));
+        }
+
+        // Chart 4: Distribution/Scatter Plot
+        function renderChart4() {
+            const container = document.getElementById('chart4');
+            container.innerHTML = '';
+
+            const margin = {top: 20, right: 30, bottom: 40, left: 60};
+            const width = container.offsetWidth - margin.left - margin.right;
+            const height = 320 - margin.top - margin.bottom;
+
+            const svg = d3.select('#chart4')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+
+            const data = visualizationData?.irrData || extractIRRData();
+
+            // Scales
+            const x = d3.scaleBand()
+                .domain(data.map(d => d.project))
+                .range([0, width])
+                .padding(0.5);
+
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.irr) * 1.2])
+                .range([height, 0]);
+
+            // Grid
+            svg.append('g')
+                .attr('class', 'grid')
+                .attr('opacity', 0.3)
+                .call(d3.axisLeft(y).tickSize(-width).tickFormat(''));
+
+            // Data points
+            svg.selectAll('.dot')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr('cx', d => x(d.project) + x.bandwidth() / 2)
+                .attr('cy', d => y(d.irr))
+                .attr('r', 7)
+                .attr('fill', colors.purple)
+                .attr('opacity', 0.7);
+
+            // Mean line
+            const mean = d3.mean(data, d => d.irr);
+            svg.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', y(mean))
+                .attr('y2', y(mean))
+                .attr('stroke', colors.orange)
+                .attr('stroke-width', 2)
+                .attr('stroke-dasharray', '5,5');
+
+            svg.append('text')
+                .attr('x', width - 10)
+                .attr('y', y(mean) - 10)
+                .attr('text-anchor', 'end')
+                .attr('font-size', '11px')
+                .attr('font-weight', '700')
+                .attr('fill', colors.orange)
+                .text(`Mean: ${mean.toFixed(1)}%`);
+
+            // Axes
+            svg.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x));
+
+            svg.append('g')
+                .attr('class', 'axis')
+                .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d}%`));
+        }
+
+        // Initialize charts with sample data on page load
+        window.addEventListener('load', () => {
+            processDataForVisualizations();
+            renderAllCharts();
+        });
+
+        // Re-render charts on window resize for responsiveness
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (activeTab === 'visualizations') {
+                    renderAllCharts();
+                }
+            }, 250);
+        });
+
+        // ===== TENDER PROCESS MODAL FUNCTIONS =====
+        function openTenderProcess() {
+            const modal = document.getElementById('tenderProcessModal');
+            const content = document.getElementById('tenderProcessContent');
+
+            // Load the tender process content
+            content.innerHTML = getTenderProcessHTML();
+
+            // Show modal
+            modal.classList.remove('hidden');
+
+            // Scroll modal to top
+            modal.scrollTop = 0;
+
+            // Also scroll window to top to ensure modal is visible from the start
+            window.scrollTo(0, 0);
+        }
+
+        function closeTenderProcess() {
+            const modal = document.getElementById('tenderProcessModal');
+            modal.classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('tenderProcessModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTenderProcess();
+            }
+        });
+
+        function getTenderProcessHTML() {
+            return `
+                <div class="text-center mb-8">
+                    <p class="text-xl text-gray-600 font-medium">From Project Qualification to Offshore Transmission Owner (OFTO)</p>
+                    <p class="text-sm text-gray-500 mt-2">(Non-Technical Summary)</p>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- Stage 1 -->
+                    <div class="relative">
+                        <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0" style="background-color: #FEEBC8; color: #78350F;">1</div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-1">Qualifying projects and tender start</h2>
+                                    <p class="inline-block text-sm font-semibold py-1 px-3 rounded-full mb-3" style="background-color: #FEEBC8; color: #78350F;">PRE-TENDER SETUP (Developer-Led)</p>
+                                    <p class="text-gray-700 mb-2">The Developer officially requests to start the tender. OFGEM initiates and reviews the project's requirements (e.g., permits, contracts) and sets an initial cost estimate (Initial Transfer Value).</p>
+                                    <div class="mt-4 border-t pt-3">
+                                        <p class="text-sm font-semibold text-gray-700">Key outcome:</p>
+                                        <p class="text-sm text-gray-600">Project is confirmed as a 'Qualifying Project', and the Tender formally begins.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stage 2 -->
+                    <div class="relative">
+                        <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0" style="background-color: #FEEBC8; color: #78350F;">2</div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-1">Pre-qualification (PQ / EPQ)</h2>
+                                    <p class="inline-block text-sm font-semibold py-1 px-3 rounded-full mb-3" style="background-color: #FEEBC8; color: #78350F;">BIDDER SELECTION (6 Months)</p>
+                                    <p class="text-gray-700 mb-2">Bidders express interest, sign confidentiality agreements, and submit high-level documents demonstrating their financial strength, legal standing, and technical capability.</p>
+                                    <div class="mt-4 border-t pt-3">
+                                        <p class="text-sm font-semibold text-gray-700">Key outcome:</p>
+                                        <p class="text-sm text-gray-600">Creation of a 'Qualifying Bidder' shortlist invited to the main tender stage. Confidential project information is released to them via a Data Room.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stage 3 -->
+                    <div class="relative">
+                        <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0" style="background-color: #D1E9FF; color: #1E40AF;">3</div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-1">Invitation to tender (ITT)</h2>
+                                    <p class="inline-block text-sm font-semibold py-1 px-3 rounded-full mb-3" style="background-color: #D1E9FF; color: #1E40AF;">MAIN COMMERCIAL BID (6 Months)</p>
+                                    <p class="text-gray-700 mb-2">Qualifying Bidders submit their detailed commercial proposals, including their proposed Tender Revenue Stream (TRS), which is the total expected revenue over the licence term. OFGEM provides an updated cost estimate (Indicative Transfer Value).</p>
+                                    <div class="mt-4 border-t pt-3">
+                                        <p class="text-sm font-semibold text-gray-700">Key outcome:</p>
+                                        <p class="text-sm text-gray-600">The Bidder with the most economic and efficient bid is chosen as the 'Preferred Bidder' (PB).</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stage 4 -->
+                    <div class="relative">
+                        <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0" style="background-color: #D1E9FF; color: #1E40AF;">4</div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-1">Best and final offer (BAFO)</h2>
+                                    <p class="inline-block text-sm font-semibold py-1 px-3 rounded-full mb-3" style="background-color: #D1E9FF; color: #1E40AF;">OPTIONAL: FINAL COMPETITION</p>
+                                    <p class="text-gray-700 mb-2">If the ITT results are too close, OFGEM may run this stage to sharpen the competition and obtain the best possible value for consumers.</p>
+                                    <div class="mt-4 border-t pt-3">
+                                        <p class="text-sm font-semibold text-gray-700">Key outcome:</p>
+                                        <p class="text-sm text-gray-600">A clear 'Preferred Bidder' is definitively selected based on the final offer.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stage 5 -->
+                    <div class="relative">
+                        <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0" style="background-color: #D1FAE5; color: #065F46;">5</div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-1">Preferred bidder (PB) stage</h2>
+                                    <p class="inline-block text-sm font-semibold py-1 px-3 rounded-full mb-3" style="background-color: #D1FAE5; color: #065F46;">CONFIRMATORY DUE DILIGENCE (6 Months)</p>
+                                    <p class="text-gray-700 mb-2">The PB works directly with the Developer to finalize all commercial, legal, and financing agreements (the PB Matters). OFGEM simultaneously calculates the Final Transfer Value (FTV) based on an audit of the Developer's actual construction costs.</p>
+                                    <div class="mt-4 p-3 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                                        <p class="text-sm font-bold text-red-700">CRITICAL REGULATORY DEADLINE</p>
+                                        <p class="text-xs text-red-600 mt-1">The Developer must transfer the assets within 18 months (subject to change with new round) from the date the assets become available for use (commissioning). The PB stage must be completed efficiently to meet this Generator Commissioning Clause deadline.</p>
+                                    </div>
+                                    <div class="mt-4 border-t pt-3">
+                                        <p class="text-sm font-semibold text-gray-700">Key outcome:</p>
+                                        <p class="text-sm text-gray-600">All PB Matters are resolved, and OFGEM completes the cost assessment to set the non-negotiable FTV.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stage 6 -->
+                    <div class="relative">
+                        <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0" style="background-color: #D1FAE5; color: #065F46;">6</div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-1">Successful bidder (SB) and licence grant</h2>
+                                    <p class="inline-block text-sm font-semibold py-1 px-3 rounded-full mb-3" style="background-color: #D1FAE5; color: #065F46;">FINAL ASSET TRANSFER</p>
+                                    <p class="text-gray-700 mb-2">The PB becomes the 'Successful Bidder'. Following a 10-day legal standstill period, the OFTO Licence is granted, financial close is achieved, and the Transmission Assets transfer from the Developer to the new OFTO.</p>
+                                    <div class="mt-4 border-t pt-3">
+                                        <p class="text-sm font-semibold text-gray-700">Key outcome:</p>
+                                        <p class="text-sm text-gray-600">The Successful Bidder is the new Offshore Transmission Owner (OFTO), receiving the assets and the regulated revenue stream (TRS) adjusted for the FTV. Asset transfer must occur before the 18-month statutory deadline.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Box -->
+                    <div class="mt-8 p-8 bg-blue-50 border-l-4 border-blue-500 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold text-blue-800 mb-4">Why is this process structured this way?</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-blue-500 font-bold mr-3 text-lg">&bull;</span>
+                                <div><span class="font-semibold">Best value for consumers:</span> The competitive nature (ITT/BAFO) drives down the long-term revenue stream (TRS) to the lowest possible cost, directly benefiting energy consumers.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 font-bold mr-3 text-lg">&bull;</span>
+                                <div><span class="font-semibold">Financial and technical rigour:</span> The PQ/EPQ stage ensures that only robust, capable entities are allowed to operate critical national infrastructure.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 font-bold mr-3 text-lg">&bull;</span>
+                                <div><span class="font-semibold">Cost control:</span> OFGEM's independent Cost Assessment determines the Final Transfer Value (FTV), preventing the Developer from selling the assets for more than their economic and efficient cost.</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="closeTenderProcess()" class="px-8 py-3 rounded font-bold text-white hover:opacity-90 transition-opacity" style="background: linear-gradient(135deg, var(--mckinsey-blue) 0%, var(--mckinsey-light-blue) 100%);">
+                        Return to Report
+                    </button>
+                </div>
+            `;
+        }
+
+        // ===== OVERVIEW MODAL FUNCTIONS =====
+        function openOverview() {
+            const modal = document.getElementById('overviewModal');
+            const content = document.getElementById('overviewContent');
+
+            // Load the overview content
+            content.innerHTML = getOverviewHTML();
+
+            // Show modal
+            modal.classList.remove('hidden');
+
+            // Scroll modal to top
+            modal.scrollTop = 0;
+
+            // Also scroll window to top to ensure modal is visible from the start
+            window.scrollTo(0, 0);
+        }
+
+        function closeOverview() {
+            const modal = document.getElementById('overviewModal');
+            modal.classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('overviewModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeOverview();
+            }
+        });
+
+        function getOverviewHTML() {
+            return `
+                <div class="text-center mb-10">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-2">Powering the Future</h2>
+                    <h3 class="text-xl font-semibold mb-4" style="color: var(--mckinsey-teal);">An Overview of the UK's Offshore Transmission Owner (OFTO) Regime</h3>
+                    <p class="max-w-3xl mx-auto text-gray-600">The OFTO regime is the foundational regulatory model attracting private capital to connect the UK's world-leading offshore wind farms to the national grid, balancing competition with strategic national energy goals.</p>
+                </div>
+
+                <!-- KPI Section -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-t-4" style="border-color: var(--mckinsey-blue);">
+                        <p class="text-sm font-semibold mb-2" style="color: var(--mckinsey-teal);">Private Investment Mobilised</p>
+                        <p class="text-5xl font-black mb-2" style="color: var(--chart-orange);">£9.5B+</p>
+                        <p class="text-sm text-gray-600">in transmission assets (up to TR8), de-risking the UK's energy transition.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-t-4" style="border-color: var(--mckinsey-blue);">
+                        <p class="text-sm font-semibold mb-2" style="color: var(--mckinsey-teal);">Offshore Capacity Connected</p>
+                        <p class="text-5xl font-black mb-2" style="color: var(--chart-orange);">12GW+</p>
+                        <p class="text-sm text-gray-600">in transmission capacity (up to TR8).</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-t-4" style="border-color: var(--mckinsey-blue);">
+                        <p class="text-sm font-semibold mb-2" style="color: var(--mckinsey-teal);">Total Annual Unindexed TRS Value</p>
+                        <p class="text-5xl font-black mb-2" style="color: var(--chart-orange);">£550M+</p>
+                        <p class="text-sm text-gray-600">annual payment the OFTOs receive from the system operator.</p>
+                    </div>
+                </div>
+
+                <!-- Strategic Mandate -->
+                <div class="bg-white p-8 rounded-lg shadow-lg mb-12">
+                    <h3 class="text-2xl font-bold text-center mb-8" style="color: var(--mckinsey-blue);">The Strategic Mandate</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="text-center p-6 rounded-lg" style="background-color: #f0f4f8;">
+                            <div class="text-4xl mb-3">⚡</div>
+                            <h4 class="text-lg font-bold mb-2" style="color: var(--mckinsey-blue);">Secure Energy Supply</h4>
+                            <p class="text-sm text-gray-600">Ensuring reliable connections for future electricity needs.</p>
+                        </div>
+                        <div class="text-center p-6 rounded-lg" style="background-color: #f0f4f8;">
+                            <div class="text-4xl mb-3">🍃</div>
+                            <h4 class="text-lg font-bold mb-2" style="color: var(--mckinsey-blue);">Drive Decarbonisation</h4>
+                            <p class="text-sm text-gray-600">Accelerating the transition away from fossil fuels.</p>
+                        </div>
+                        <div class="text-center p-6 rounded-lg" style="background-color: #f0f4f8;">
+                            <div class="text-4xl mb-3">💰</div>
+                            <h4 class="text-lg font-bold mb-2" style="color: var(--mckinsey-blue);">Minimise Consumer Cost</h4>
+                            <p class="text-sm text-gray-600">Using competition to deliver long-term value for money.</p>
+                        </div>
+                        <div class="text-center p-6 rounded-lg" style="background-color: #f0f4f8;">
+                            <div class="text-4xl mb-3">🔧</div>
+                            <h4 class="text-lg font-bold mb-2" style="color: var(--mckinsey-blue);">Fit-for-Purpose Systems</h4>
+                            <p class="text-sm text-gray-600">Delivering resilient and high-quality transmission infrastructure.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How It Works -->
+                <div class="bg-white p-8 rounded-lg shadow-lg mb-12">
+                    <h3 class="text-2xl font-bold text-center mb-2" style="color: var(--mckinsey-blue);">How It Works: The "Generator Build" Model</h3>
+                    <p class="text-center max-w-2xl mx-auto text-gray-600 mb-8">The OFTO regime operates through a structured, multi-stage process that transfers transmission assets from wind farm developers to specialized, long-term owners.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                        <div class="text-center p-6 rounded-lg" style="background-color: #f0f4f8; border-left: 4px solid var(--chart-orange);">
+                            <div class="text-xl font-bold mb-2" style="color: var(--chart-orange);">Step 1</div>
+                            <h4 class="text-lg font-semibold mb-2" style="color: var(--mckinsey-blue);">Construction</h4>
+                            <p class="text-sm text-gray-600">Offshore wind farm developer builds the generation and transmission assets together.</p>
+                        </div>
+
+                        <div class="text-center hidden md:block">
+                            <div class="text-4xl font-bold" style="color: var(--mckinsey-teal);">→</div>
+                        </div>
+
+                        <div class="text-center p-6 rounded-lg" style="background-color: #f0f4f8; border-left: 4px solid var(--chart-orange);">
+                            <div class="text-xl font-bold mb-2" style="color: var(--chart-orange);">Step 2</div>
+                            <h4 class="text-lg font-semibold mb-2" style="color: var(--mckinsey-blue);">Tender Process</h4>
+                            <p class="text-sm text-gray-600">Ofgem runs a competitive tender to select a bidder to become the OFTO for the new assets.</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center my-6 md:hidden">
+                        <div class="text-4xl font-bold" style="color: var(--mckinsey-teal);">↓</div>
+                    </div>
+
+                    <div class="text-center mt-6 md:hidden">
+                        <div class="text-4xl font-bold" style="color: var(--mckinsey-teal);">↓</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                        <div class="md:col-start-2 text-center p-6 rounded-lg" style="background-color: #f0f4f8; border-left: 4px solid var(--chart-orange);">
+                            <div class="text-xl font-bold mb-2" style="color: var(--chart-orange);">Step 3</div>
+                            <h4 class="text-lg font-semibold mb-2" style="color: var(--mckinsey-blue);">Asset Transfer</h4>
+                            <p class="text-sm text-gray-600">Winning bidder acquires the transmission assets post-construction and is granted a 25-year OFTO licence.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Architecture -->
+                <div class="bg-white p-8 rounded-lg shadow-lg mb-12">
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--mckinsey-blue);">Market Architecture: The Principle of Unbundling</h3>
+                    <p class="text-gray-600 mb-4">A core philosophy of the OFTO regime is the legal and operational separation ("unbundling") of electricity generation from transmission. This prevents monopolies and fosters a competitive environment for transmission ownership and maintenance, which is overseen by the regulator, Ofgem.</p>
+                    <p class="text-gray-700 font-semibold mb-6" style="color: var(--mckinsey-gray);">This structure creates a unique hybrid market: a highly regulated framework that uses competition to drive efficiency and innovation.</p>
+
+                    <div class="p-6 rounded-lg relative" style="background-color: #f0f4f8;">
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="p-4 rounded-lg text-center" style="background-color: var(--mckinsey-teal); color: white;">
+                                <h5 class="font-bold mb-1">Wind Farm Generator</h5>
+                                <p class="text-sm">Develops & Operates Wind Turbines</p>
+                            </div>
+                            <div class="p-4 rounded-lg text-center" style="background-color: var(--chart-orange); color: white;">
+                                <h5 class="font-bold mb-1">OFTO</h5>
+                                <p class="text-sm">Owns & Maintains Transmission Assets</p>
+                            </div>
+                        </div>
+
+                        <div class="relative my-6">
+                            <div class="border-t-4 border-dashed" style="border-color: var(--chart-orange);"></div>
+                            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 rounded" style="background-color: #f0f4f8;">
+                                <p class="font-bold text-lg" style="color: var(--chart-orange);">Unbundled</p>
+                            </div>
+                        </div>
+
+                        <div class="text-center p-4 rounded-lg" style="background-color: var(--mckinsey-gray); color: white;">
+                            <h5 class="font-bold mb-1">Ofgem (Regulator)</h5>
+                            <p class="text-sm">Awards Licences & Oversees Regime</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="closeOverview()" class="px-8 py-3 rounded font-bold text-white hover:opacity-90 transition-opacity" style="background: linear-gradient(135deg, var(--mckinsey-blue) 0%, var(--mckinsey-light-blue) 100%);">
+                        Return to Report
+                    </button>
+                </div>
+            `;
+        }
+
+        // ===== REGULATORY MILESTONES MODAL FUNCTIONS =====
+        function openRegulatoryMilestones() {
+            const modal = document.getElementById('regulatoryMilestonesModal');
+            const content = document.getElementById('regulatoryMilestonesContent');
+
+            // Load the regulatory milestones content
+            content.innerHTML = getRegulatoryMilestonesHTML();
+
+            // Show modal
+            modal.classList.remove('hidden');
+
+            // Scroll modal to top
+            modal.scrollTop = 0;
+
+            // Also scroll window to top to ensure modal is visible from the start
+            window.scrollTo(0, 0);
+        }
+
+        function closeRegulatoryMilestones() {
+            const modal = document.getElementById('regulatoryMilestonesModal');
+            modal.classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('regulatoryMilestonesModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRegulatoryMilestones();
+            }
+        });
+
+        function getRegulatoryMilestonesHTML() {
+            return `
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">OFTO Regime Timeline</h2>
+                    <p class="text-lg text-gray-600">From Conception to Modern Infrastructure (2004–2025)</p>
+                </div>
+
+                <!-- Phase 1: Foundation (2004-2013) -->
+                <div class="mb-12">
+                    <div class="flex items-center mb-6">
+                        <div class="w-3 h-3 rounded-full mr-3" style="background-color: #DC2626;"></div>
+                        <h3 class="text-2xl font-bold" style="color: #DC2626;">Phase 1: Foundation (2004–2013)</h3>
+                    </div>
+
+                    <div class="overflow-x-auto pb-4">
+                        <div class="flex space-x-4" style="min-width: min-content;">
+                            <!-- Milestone 1 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2004</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Energy Act 2004</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Section 6C amendment introduced competitive tendering for offshore electricity transmission licences, establishing the legal foundation for the OFTO regime.</p>
+                            </div>
+
+                            <!-- Milestone 2 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2009</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">OFTO Regime Launch</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Official launch of the OFTO regulatory framework by Ofgem and DECC, creating a formal competitive tender process for offshore transmission ownership rights.</p>
+                            </div>
+
+                            <!-- Milestone 3 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2010</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">First Tender Round</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Transitional tender round (TR1) launched covering nine legacy offshore wind farm transmission assets, setting the blueprint for future tender processes.</p>
+                            </div>
+
+                            <!-- Milestone 4 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2011</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">First Licence Award</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Greater Gabbard OFTO licence awarded to Transmission Capital Partners (TCP), marking the first successful private investment in offshore transmission infrastructure.</p>
+                            </div>
+
+                            <!-- Milestone 5 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2012</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Generator Build Model</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Introduction of the "Generator Build" route, enabling wind farm developers to construct transmission assets before competitive transfer to OFTOs post-commissioning.</p>
+                            </div>
+
+                            <!-- Milestone 6 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2013</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Tender Round 2 Complete</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">All nine TR1 licences successfully awarded by end-2013, validating the commercial viability and attractiveness of the OFTO investment model.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: Implementation (2012-2016) -->
+                <div class="mb-12">
+                    <div class="flex items-center mb-6">
+                        <div class="w-3 h-3 rounded-full mr-3" style="background-color: #EA580C;"></div>
+                        <h3 class="text-2xl font-bold" style="color: #EA580C;">Phase 2: Implementation (2012–2016)</h3>
+                    </div>
+
+                    <div class="overflow-x-auto pb-4">
+                        <div class="flex space-x-4" style="min-width: min-content;">
+                            <!-- Milestone 7 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #EA580C;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #EA580C;">2014</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Tender Round 3 Launch</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">TR3 tender launched for next wave of offshore transmission assets, including projects under the new Generator Build model framework.</p>
+                            </div>
+
+                            <!-- Milestone 8 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #EA580C;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #EA580C;">2015</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Regulatory Refinement</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Electricity (Competitive Tenders for Offshore Transmission Licences) Regulations 2015 enacted, codifying and refining the tender process operational framework.</p>
+                            </div>
+
+                            <!-- Milestone 9 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #EA580C;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #EA580C;">2016</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Market Expansion</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Increased institutional investor participation, with pension funds and infrastructure specialists entering the OFTO market, driving competitive pricing discipline.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3: Scaling (2018-2025) -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-3 h-3 rounded-full mr-3" style="background-color: #0073cf;"></div>
+                        <h3 class="text-2xl font-bold" style="color: #0073cf;">Phase 3: Scaling (2018–2025)</h3>
+                    </div>
+
+                    <div class="overflow-x-auto pb-4">
+                        <div class="flex space-x-4" style="min-width: min-content;">
+                            <!-- Milestone 10 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2018</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Tender Round 4</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">TR4 launched to support the UK's aggressive offshore wind capacity targets, accommodating larger-scale projects and more complex technical requirements.</p>
+                            </div>
+
+                            <!-- Milestone 11 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2020</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">£10bn Investment Milestone</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Cumulative OFTO investment surpasses £10 billion across all tender rounds, demonstrating the regime's success in mobilising private infrastructure capital.</p>
+                            </div>
+
+                            <!-- Milestone 12 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2022</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Tender Round 5</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">TR5 initiated for next-generation offshore wind transmission assets, aligning with the government's 40GW offshore wind target by 2030.</p>
+                            </div>
+
+                            <!-- Milestone 13 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2024</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Market Maturity</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Established secondary market for OFTO assets, with portfolio trades and refinancing activities demonstrating asset class liquidity and price discovery mechanisms.</p>
+                            </div>
+
+                            <!-- Milestone 14 -->
+                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2025</div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Ongoing Pipeline</h4>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed">Robust project pipeline with multiple TR5 and TR6 tenders active or anticipated, supporting continued offshore wind deployment and net-zero carbon objectives.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="closeRegulatoryMilestones()" class="px-8 py-3 rounded font-bold text-white hover:opacity-90 transition-opacity" style="background: linear-gradient(135deg, var(--mckinsey-blue) 0%, var(--mckinsey-light-blue) 100%);">
+                        Return to Report
+                    </button>
+                </div>
+            `;
         }
     </script>
 </body>
