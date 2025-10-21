@@ -230,10 +230,10 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Chart 1: Technical Availability by Project -->
                     <div class="chart-container">
-                        <div class="chart-title">OFTO Technical Availability Performance</div>
+                        <div class="chart-title">OFTO Availability Performance</div>
                         <div class="chart-subtitle">Average annual availability since project inception (%)</div>
                         <div id="chart1"></div>
-                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: NESO Offshore Transmission Availability Report*<br><span style="font-style: italic;">*Adjusted with Exception Events approved by Ofgem</span></p>
+                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: <a href="https://www.neso.energy/industry-information/industry-data-and-reports/system-performance-reports" target="_blank" style="color: var(--mckinsey-blue); text-decoration: underline;">NESO - Offshore System Availability</a> (Adjusted with Exception Events approved by OFGEM)</p>
                     </div>
 
                     <!-- Chart 2: Ownership Capacity -->
@@ -766,7 +766,7 @@
                 .padding(0.1);
 
             const y = d3.scaleLinear()
-                .domain([95, 100.5])
+                .domain([95, 101])
                 .range([height, 0]);
 
             // Line generator
@@ -784,13 +784,13 @@
                     .tickFormat('')
                 );
 
-            // Add threshold line at 98% - more prominent
+            // Add threshold line at 98% - bright red for visibility
             svg.append('line')
                 .attr('x1', 0)
                 .attr('x2', width)
                 .attr('y1', y(98))
                 .attr('y2', y(98))
-                .attr('stroke', '#dc2626')
+                .attr('stroke', '#ef4444')
                 .attr('stroke-width', 3)
                 .attr('stroke-dasharray', '8,4')
                 .attr('opacity', 1);
@@ -812,7 +812,7 @@
                 .attr('y', y(98) - 6)
                 .attr('text-anchor', 'middle')
                 .attr('font-size', '11px')
-                .attr('fill', '#dc2626')
+                .attr('fill', '#ef4444')
                 .attr('font-weight', '700')
                 .text('98% threshold');
 
@@ -850,13 +850,21 @@
                 .attr('stroke', 'white')
                 .attr('stroke-width', 2);
 
-            // Value labels - prevent overlap with threshold line
+            // Value labels - show selectively to reduce density
             svg.selectAll('.value-label')
                 .data(data)
                 .enter()
+                .filter((d, i) => {
+                    // Show labels for: first, last, below threshold, and every 3rd year
+                    return i === 0 || i === data.length - 1 || d.availability < 98 || i % 3 === 0;
+                })
                 .append('text')
                 .attr('x', d => x(d.year) + x.bandwidth() / 2)
                 .attr('y', d => {
+                    // Position 2014-15 and 2015-16 below the point
+                    if (d.year === '2014-15' || d.year === '2015-16') {
+                        return y(d.availability) + 18;
+                    }
                     // If close to 98% threshold, position label strategically
                     if (Math.abs(d.availability - 98) < 0.5) {
                         return d.availability > 98 ? y(d.availability) - 10 : y(d.availability) + 18;
@@ -866,7 +874,7 @@
                 .attr('text-anchor', 'middle')
                 .attr('font-size', '10px')
                 .attr('font-weight', '700')
-                .attr('fill', d => d.availability < 98 ? '#dc2626' : colors.gray)
+                .attr('fill', d => d.availability < 98 ? '#ef4444' : colors.gray)
                 .text(d => `${d.availability.toFixed(2)}%`);
 
             // X-axis
@@ -881,10 +889,10 @@
                 .attr('dy', '.15em')
                 .attr('transform', 'rotate(-45)');
 
-            // Y-axis
+            // Y-axis with 1% steps
             svg.append('g')
                 .attr('class', 'axis')
-                .call(d3.axisLeft(y).tickFormat(d => `${d}%`));
+                .call(d3.axisLeft(y).ticks(6).tickValues([95, 96, 97, 98, 99, 100, 101]).tickFormat(d => `${d}%`));
 
             // Remove axis lines for cleaner look
             svg.selectAll('.axis path').remove();
