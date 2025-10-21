@@ -228,12 +228,12 @@
 
                 <!-- Charts Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Chart 1: Ownership Concentration -->
+                    <!-- Chart 1: Technical Availability by Project -->
                     <div class="chart-container">
-                        <div class="chart-title">OFTO ownership concentration</div>
-                        <div class="chart-subtitle">Market share by transmission owner (%)</div>
+                        <div class="chart-title">OFTO Technical Availability Performance</div>
+                        <div class="chart-subtitle">Average annual availability since project inception (%)</div>
                         <div id="chart1"></div>
-                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: Ofgem, industry filings</p>
+                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: NESO Offshore Transmission Availability Report*<br><span style="font-style: italic;">*Adjusted with Exception Events approved by Ofgem</span></p>
                     </div>
 
                     <!-- Chart 2: Ownership Capacity -->
@@ -685,15 +685,25 @@
         }
 
         function extractMarketShareData() {
-            if (excelData && excelData['MarketShare']) {
-                return excelData['MarketShare'];
+            if (excelData && excelData['Availability']) {
+                return excelData['Availability'];
             }
+            // Average OFTO Technical Availability by Year (across all projects)
             return [
-                {operator: 'Operator A', share: 28},
-                {operator: 'Operator B', share: 24},
-                {operator: 'Operator C', share: 18},
-                {operator: 'Operator D', share: 15},
-                {operator: 'Others', share: 15}
+                {year: '2011-12', availability: 99.97},
+                {year: '2012-13', availability: 99.56},
+                {year: '2013-14', availability: 99.26},
+                {year: '2014-15', availability: 96.87},
+                {year: '2015-16', availability: 96.92},
+                {year: '2016-17', availability: 99.80},
+                {year: '2017-18', availability: 99.82},
+                {year: '2018-19', availability: 99.32},
+                {year: '2019-20', availability: 99.89},
+                {year: '2020-21', availability: 99.84},
+                {year: '2021-22', availability: 99.81},
+                {year: '2022-23', availability: 99.46},
+                {year: '2023-24', availability: 98.64},
+                {year: '2024-25', availability: 98.94}
             ];
         }
 
@@ -731,14 +741,14 @@
             renderChart4();  // Distribution chart
         }
 
-        // Chart 1: OFTO Ownership Concentration (Percentage Bar Chart)
+        // Chart 1: OFTO Technical Availability Trend (Line Chart)
         function renderChart1() {
             const container = document.getElementById('chart1');
             container.innerHTML = '';
 
-            const margin = {top: 20, right: 40, bottom: 40, left: 180};
+            const margin = {top: 20, right: 30, bottom: 60, left: 60};
             const width = container.offsetWidth - margin.left - margin.right;
-            const height = 360 - margin.top - margin.bottom;
+            const height = 340 - margin.top - margin.bottom;
 
             const svg = d3.select('#chart1')
                 .append('svg')
@@ -747,69 +757,134 @@
                 .append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
 
-            const data = visualizationData?.ownershipData || extractOwnershipData();
-
-            // Calculate total and percentages
-            const total = d3.sum(data, d => d.capacityAdjusted);
-            const dataWithPercentages = data.map(d => ({
-                owner: d.owner,
-                percentage: (d.capacityAdjusted / total) * 100,
-                capacity: d.capacityAdjusted
-            }));
-
-            // Sort by percentage descending
-            const sortedData = dataWithPercentages.sort((a, b) => b.percentage - a.percentage);
+            const data = visualizationData?.marketShareData || extractMarketShareData();
 
             // Scales
-            const x = d3.scaleLinear()
-                .domain([0, 100])
-                .range([0, width]);
+            const x = d3.scaleBand()
+                .domain(data.map(d => d.year))
+                .range([0, width])
+                .padding(0.1);
 
-            const y = d3.scaleBand()
-                .domain(sortedData.map(d => d.owner))
-                .range([0, height])
-                .padding(0.25);
+            const y = d3.scaleLinear()
+                .domain([95, 100.5])
+                .range([height, 0]);
 
-            // Bars
-            svg.selectAll('.bar')
-                .data(sortedData)
+            // Line generator
+            const line = d3.line()
+                .x(d => x(d.year) + x.bandwidth() / 2)
+                .y(d => y(d.availability))
+                .curve(d3.curveMonotoneX);
+
+            // Grid lines
+            svg.append('g')
+                .attr('class', 'grid')
+                .attr('opacity', 0.1)
+                .call(d3.axisLeft(y)
+                    .tickSize(-width)
+                    .tickFormat('')
+                );
+
+            // Add threshold line at 98% - more prominent
+            svg.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', y(98))
+                .attr('y2', y(98))
+                .attr('stroke', '#dc2626')
+                .attr('stroke-width', 3)
+                .attr('stroke-dasharray', '8,4')
+                .attr('opacity', 1);
+
+            // Threshold label with background for visibility
+            const thresholdLabel = svg.append('g');
+
+            thresholdLabel.append('rect')
+                .attr('x', width - 105)
+                .attr('y', y(98) - 18)
+                .attr('width', 100)
+                .attr('height', 16)
+                .attr('fill', 'white')
+                .attr('opacity', 0.95)
+                .attr('rx', 3);
+
+            thresholdLabel.append('text')
+                .attr('x', width - 55)
+                .attr('y', y(98) - 6)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '11px')
+                .attr('fill', '#dc2626')
+                .attr('font-weight', '700')
+                .text('98% threshold');
+
+            // Highlight area below 98% threshold
+            data.forEach((d, i) => {
+                if (d.availability < 98) {
+                    svg.append('rect')
+                        .attr('x', x(d.year))
+                        .attr('y', y(d.availability))
+                        .attr('width', x.bandwidth())
+                        .attr('height', y(98) - y(d.availability))
+                        .attr('fill', '#fca5a5')
+                        .attr('opacity', 0.3);
+                }
+            });
+
+            // Draw line
+            svg.append('path')
+                .datum(data)
+                .attr('fill', 'none')
+                .attr('stroke', colors.blue)
+                .attr('stroke-width', 3)
+                .attr('d', line);
+
+            // Add data points
+            svg.selectAll('.dot')
+                .data(data)
                 .enter()
-                .append('rect')
-                .attr('class', 'bar')
-                .attr('x', 0)
-                .attr('y', d => y(d.owner))
-                .attr('width', d => x(d.percentage))
-                .attr('height', y.bandwidth())
-                .attr('fill', colors.blue)
-                .attr('rx', 2);
+                .append('circle')
+                .attr('class', 'dot')
+                .attr('cx', d => x(d.year) + x.bandwidth() / 2)
+                .attr('cy', d => y(d.availability))
+                .attr('r', d => d.availability < 98 ? 6 : 4)
+                .attr('fill', d => d.availability < 98 ? '#dc2626' : colors.blue)
+                .attr('stroke', 'white')
+                .attr('stroke-width', 2);
 
-            // Percentage labels on bars
-            svg.selectAll('.label')
-                .data(sortedData)
+            // Value labels - prevent overlap with threshold line
+            svg.selectAll('.value-label')
+                .data(data)
                 .enter()
                 .append('text')
-                .attr('x', d => x(d.percentage) - 8)
-                .attr('y', d => y(d.owner) + y.bandwidth() / 2)
-                .attr('dy', '.35em')
-                .attr('text-anchor', 'end')
-                .attr('font-size', '12px')
+                .attr('x', d => x(d.year) + x.bandwidth() / 2)
+                .attr('y', d => {
+                    // If close to 98% threshold, position label strategically
+                    if (Math.abs(d.availability - 98) < 0.5) {
+                        return d.availability > 98 ? y(d.availability) - 10 : y(d.availability) + 18;
+                    }
+                    return y(d.availability) - 10;
+                })
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '10px')
                 .attr('font-weight', '700')
-                .attr('fill', 'white')
-                .text(d => `${d.percentage.toFixed(1)}%`);
-
-            // Y-axis (owner names)
-            svg.append('g')
-                .attr('class', 'axis')
-                .call(d3.axisLeft(y))
-                .selectAll('text')
-                .style('font-size', '11px')
-                .style('font-weight', '400');
+                .attr('fill', d => d.availability < 98 ? '#dc2626' : colors.gray)
+                .text(d => `${d.availability.toFixed(2)}%`);
 
             // X-axis
             svg.append('g')
                 .attr('class', 'axis')
                 .attr('transform', `translate(0,${height})`)
-                .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d}%`));
+                .call(d3.axisBottom(x))
+                .selectAll('text')
+                .style('font-size', '10px')
+                .style('text-anchor', 'end')
+                .attr('dx', '-.8em')
+                .attr('dy', '.15em')
+                .attr('transform', 'rotate(-45)');
+
+            // Y-axis
+            svg.append('g')
+                .attr('class', 'axis')
+                .call(d3.axisLeft(y).tickFormat(d => `${d}%`));
 
             // Remove axis lines for cleaner look
             svg.selectAll('.axis path').remove();
@@ -1467,167 +1542,130 @@
         function getRegulatoryMilestonesHTML() {
             return `
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">OFTO Regime Timeline</h2>
-                    <p class="text-lg text-gray-600">From Conception to Modern Infrastructure (2004–2025)</p>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-2">OFTO Policy: Two Decades of Competitive Transmission</h2>
+                    <p class="text-lg font-medium" style="color: var(--mckinsey-light-blue);">Key Regulatory Milestones for the UK Offshore Wind Grid (2004–2025)</p>
                 </div>
 
-                <!-- Phase 1: Foundation (2004-2013) -->
+                <!-- Phase 1: Foundation and Initial Launch (2004-2013) -->
                 <div class="mb-12">
-                    <div class="flex items-center mb-6">
-                        <div class="w-3 h-3 rounded-full mr-3" style="background-color: #DC2626;"></div>
-                        <h3 class="text-2xl font-bold" style="color: #DC2626;">Phase 1: Foundation (2004–2013)</h3>
-                    </div>
+                    <h3 class="text-2xl font-bold mb-4 pb-2" style="color: #ef4444; border-bottom: 3px solid #ef4444;">Phase 1: Foundation and Initial Launch (2004–2013)</h3>
 
-                    <div class="overflow-x-auto pb-4">
-                        <div class="flex space-x-4" style="min-width: min-content;">
+                    <div class="overflow-x-auto pb-4 shadow-inner bg-gray-50 p-4 rounded-xl">
+                        <div class="flex gap-6" style="min-width: min-content;">
                             <!-- Milestone 1 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2004</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Energy Act 2004</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Section 6C amendment introduced competitive tendering for offshore electricity transmission licences, establishing the legal foundation for the OFTO regime.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-red-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-red-100 text-red-800 inline-block mb-2">2004</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">Enabling Legislation</h4>
+                                <p class="text-sm text-gray-600 leading-snug">Energy Act 2004 granted powers to introduce a competitive offshore transmission regime (Sections 92, inserting Electricity Act 1989 s.6C).</p>
                             </div>
 
                             <!-- Milestone 2 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2009</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">OFTO Regime Launch</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Official launch of the OFTO regulatory framework by Ofgem and DECC, creating a formal competitive tender process for offshore transmission ownership rights.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-red-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-red-100 text-red-800 inline-block mb-2">Mar 2006</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">Regulated Asset Decision</h4>
+                                <p class="text-sm text-gray-600 leading-snug">UK confirmed offshore transmission would be a licensed, regulated asset model, initiating policy development.</p>
                             </div>
 
                             <!-- Milestone 3 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2010</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">First Tender Round</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Transitional tender round (TR1) launched covering nine legacy offshore wind farm transmission assets, setting the blueprint for future tender processes.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-red-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-red-100 text-red-800 inline-block mb-2">Jun 2009</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">Regime Go-Active</h4>
+                                <p class="text-sm text-gray-600 leading-snug">Competitive Tender Regulations 2009 came into force, launching the competitive model to achieve lower costs.</p>
                             </div>
 
                             <!-- Milestone 4 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2011</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">First Licence Award</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Greater Gabbard OFTO licence awarded to Transmission Capital Partners (TCP), marking the first successful private investment in offshore transmission infrastructure.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-red-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-red-100 text-red-800 inline-block mb-2">Jul 2009</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">Tender Round 1 Opens</h4>
+                                <p class="text-sm text-gray-600 leading-snug">First Transitional Tender Round (TR1) opened for nine early projects, showing strong market interest despite the credit crunch.</p>
                             </div>
 
                             <!-- Milestone 5 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2012</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Generator Build Model</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Introduction of the "Generator Build" route, enabling wind farm developers to construct transmission assets before competitive transfer to OFTOs post-commissioning.</p>
-                            </div>
-
-                            <!-- Milestone 6 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #DC2626;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #DC2626;">2013</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Tender Round 2 Complete</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">All nine TR1 licences successfully awarded by end-2013, validating the commercial viability and attractiveness of the OFTO investment model.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-red-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-red-100 text-red-800 inline-block mb-2">2011–2014</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">First OFTO Licenses</h4>
+                                <p class="text-sm text-gray-600 leading-snug">TR1 assets (£1.1bn value) successfully transferred, validating the model and attracting competitive financing.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Phase 2: Implementation (2012-2016) -->
+                <!-- Phase 2: Full Implementation and Review (2012-2016) -->
                 <div class="mb-12">
-                    <div class="flex items-center mb-6">
-                        <div class="w-3 h-3 rounded-full mr-3" style="background-color: #EA580C;"></div>
-                        <h3 class="text-2xl font-bold" style="color: #EA580C;">Phase 2: Implementation (2012–2016)</h3>
-                    </div>
+                    <h3 class="text-2xl font-bold mb-4 pb-2" style="color: #f97316; border-bottom: 3px solid #f97316;">Phase 2: Full Implementation and Review (2012–2016)</h3>
 
-                    <div class="overflow-x-auto pb-4">
-                        <div class="flex space-x-4" style="min-width: min-content;">
+                    <div class="overflow-x-auto pb-4 shadow-inner bg-gray-50 p-4 rounded-xl">
+                        <div class="flex gap-6" style="min-width: min-content;">
+                            <!-- Milestone 6 -->
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-orange-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-orange-100 text-orange-800 inline-block mb-2">Jun 2012</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">NAO Report</h4>
+                                <p class="text-sm text-gray-600 leading-snug">National Audit Office evaluated the model, citing innovation but raising caution regarding high transaction costs and consumer risks.</p>
+                            </div>
+
                             <!-- Milestone 7 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #EA580C;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #EA580C;">2014</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Tender Round 3 Launch</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">TR3 tender launched for next wave of offshore transmission assets, including projects under the new Generator Build model framework.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-orange-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-orange-100 text-orange-800 inline-block mb-2">Early 2013</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">Enduring Regime</h4>
+                                <p class="text-sm text-gray-600 leading-snug">New projects moved to the Enduring regime, which included the option for an "OFTO build" (though "generator build" remained the standard).</p>
                             </div>
 
                             <!-- Milestone 8 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #EA580C;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #EA580C;">2015</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Regulatory Refinement</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Electricity (Competitive Tenders for Offshore Transmission Licences) Regulations 2015 enacted, codifying and refining the tender process operational framework.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-orange-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-orange-100 text-orange-800 inline-block mb-2">Jun 2014</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">Full Commencement</h4>
+                                <p class="text-sm text-gray-600 leading-snug">Generator Commissioning Clause mandated an 18-month test window before mandatory asset transfer, de-risking projects for buyers.</p>
                             </div>
 
                             <!-- Milestone 9 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #EA580C;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #EA580C;">2016</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Market Expansion</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Increased institutional investor participation, with pension funds and infrastructure specialists entering the OFTO market, driving competitive pricing discipline.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-orange-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-orange-100 text-orange-800 inline-block mb-2">Sept 2014</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">TR1 Benefits Confirmed</h4>
+                                <p class="text-sm text-gray-600 leading-snug">Ofgem review confirmed £200–£400 million in consumer savings achieved in the first tender round (TR1).</p>
+                            </div>
+
+                            <!-- Milestone 10 -->
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-orange-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-orange-100 text-orange-800 inline-block mb-2">2018</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">25-Year Licenses</h4>
+                                <p class="text-sm text-gray-600 leading-snug">Policy refined to extend OFTO licenses from 20 to 25 years (from TR5) to align with longer asset life and reduce annual charges.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Phase 3: Scaling (2018-2025) -->
+                <!-- Phase 3: Scaling and Future Coordination (2018-2025) -->
                 <div class="mb-8">
-                    <div class="flex items-center mb-6">
-                        <div class="w-3 h-3 rounded-full mr-3" style="background-color: #0073cf;"></div>
-                        <h3 class="text-2xl font-bold" style="color: #0073cf;">Phase 3: Scaling (2018–2025)</h3>
-                    </div>
+                    <h3 class="text-2xl font-bold mb-4 pb-2" style="color: #3b82f6; border-bottom: 3px solid #3b82f6;">Phase 3: Scaling and Future Coordination (2018–2025)</h3>
 
-                    <div class="overflow-x-auto pb-4">
-                        <div class="flex space-x-4" style="min-width: min-content;">
-                            <!-- Milestone 10 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2018</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Tender Round 4</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">TR4 launched to support the UK's aggressive offshore wind capacity targets, accommodating larger-scale projects and more complex technical requirements.</p>
-                            </div>
-
+                    <div class="overflow-x-auto pb-4 shadow-inner bg-gray-50 p-4 rounded-xl">
+                        <div class="flex gap-6" style="min-width: min-content;">
                             <!-- Milestone 11 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2020</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">£10bn Investment Milestone</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Cumulative OFTO investment surpasses £10 billion across all tender rounds, demonstrating the regime's success in mobilising private infrastructure capital.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-blue-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-blue-100 text-blue-800 inline-block mb-2">2018–2020</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">Growing Scale</h4>
+                                <p class="text-sm text-gray-600 leading-snug">Projects scaled up significantly (e.g., Hornsea One link ~£1.17bn). Total investment passed ~£5.7b across 21 licenses.</p>
                             </div>
 
                             <!-- Milestone 12 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2022</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Tender Round 5</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">TR5 initiated for next-generation offshore wind transmission assets, aligning with the government's 40GW offshore wind target by 2030.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-blue-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-blue-100 text-blue-800 inline-block mb-2">Jul 2020</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">OTNR Launched</h4>
+                                <p class="text-sm text-gray-600 leading-snug">Offshore Transmission Network Review (OTNR) initiated to address challenges of the radial approach due to planned 40+ GW expansion.</p>
                             </div>
 
                             <!-- Milestone 13 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2024</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Market Maturity</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Established secondary market for OFTO assets, with portfolio trades and refinancing activities demonstrating asset class liquidity and price discovery mechanisms.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-blue-500 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-blue-100 text-blue-800 inline-block mb-2">May 2023</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">OTNR Conclusions</h4>
+                                <p class="text-sm text-gray-600 leading-snug">Government outlined reforms, including plans for multi-purpose interconnectors and shared infrastructure to optimize future grid development.</p>
                             </div>
 
                             <!-- Milestone 14 -->
-                            <div class="flex-shrink-0 bg-white rounded-lg shadow-lg p-6 border-t-4" style="width: 320px; border-color: #0073cf;">
-                                <div class="flex items-center mb-3">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mr-3" style="background-color: #0073cf;">2025</div>
-                                    <h4 class="font-bold text-gray-800 text-lg">Ongoing Pipeline</h4>
-                                </div>
-                                <p class="text-gray-700 text-sm leading-relaxed">Robust project pipeline with multiple TR5 and TR6 tenders active or anticipated, supporting continued offshore wind deployment and net-zero carbon objectives.</p>
+                            <div class="flex-shrink-0 bg-white rounded-xl shadow-lg p-5 border-t-8 border-indigo-600 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="width: 280px; min-height: 200px;">
+                                <span class="text-sm font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 inline-block mb-2">2024-2025</span>
+                                <h4 class="text-lg font-extrabold text-gray-900 mb-2">Ongoing Evolution</h4>
+                                <p class="text-sm text-gray-600 leading-snug">OFTO investment exceeds £10 billion. Consultation begins on end-of-life/ extension arrangements for the earliest 20-year licenses.</p>
                             </div>
                         </div>
                     </div>
