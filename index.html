@@ -241,20 +241,20 @@
                         </div>
                     </div>
 
-                    <!-- Chart 3: Waterfall Chart -->
+                    <!-- Chart 3: Revenue per MW by Tender Round -->
                     <div class="chart-container">
-                        <div class="chart-title">Revenue Composition Analysis</div>
-                        <div class="chart-subtitle">Breakdown of annual revenue streams (£ million)</div>
+                        <div class="chart-title">Annual Revenue per MW by Tender Round</div>
+                        <div class="chart-subtitle">TRS per megawatt capacity (£/MW)</div>
                         <div id="chart3"></div>
-                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: Financial models, market data</p>
+                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: Ofgem tender documentation, project filings</p>
                     </div>
 
-                    <!-- Chart 4: Distribution Chart -->
+                    <!-- Chart 4: Capacity vs Transfer Value -->
                     <div class="chart-container">
-                        <div class="chart-title">IRR Distribution Across Tenders</div>
-                        <div class="chart-subtitle">Internal rate of return by project (%)</div>
+                        <div class="chart-title">Project Scale vs Transfer Value</div>
+                        <div class="chart-subtitle">Capacity (MW) vs Transfer Value (£m), sized by Annual TRS</div>
                         <div id="chart4"></div>
-                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: Precedent transaction analysis</p>
+                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: Ofgem OFTO transfer documentation</p>
                     </div>
                 </div>
             </div>
@@ -701,28 +701,39 @@
             ];
         }
 
-        function extractRevenueData() {
-            if (excelData && excelData['Revenue']) {
-                return excelData['Revenue'];
+        function extractOFTOProjectData() {
+            if (excelData && excelData['OFTOProjects']) {
+                return excelData['OFTOProjects'];
             }
+            // OFTO Project Data
             return [
-                {category: 'Base Revenue', value: 120},
-                {category: 'Availability Bonus', value: 25},
-                {category: 'Inflation Adj.', value: 18},
-                {category: 'Other Income', value: 8}
-            ];
-        }
-
-        function extractIRRData() {
-            if (excelData && excelData['IRR']) {
-                return excelData['IRR'];
-            }
-            return [
-                {project: 'P1', irr: 8.2}, {project: 'P2', irr: 9.1},
-                {project: 'P3', irr: 7.8}, {project: 'P4', irr: 10.2},
-                {project: 'P5', irr: 8.9}, {project: 'P6', irr: 9.5},
-                {project: 'P7', irr: 8.4}, {project: 'P8', irr: 9.8},
-                {project: 'P9', irr: 8.1}, {project: 'P10', irr: 9.3}
+                { tr: "TR1", project: "Robin Rigg", capacity: 180, value: 65.5, trs: 6.533, trs_per_mw: 36294, year: 2011 },
+                { tr: "TR1", project: "Gunfleet Sands", capacity: 173, value: 49.5, trs: 6.106, trs_per_mw: 35295, year: 2011 },
+                { tr: "TR1", project: "Barrow", capacity: 90, value: 33.6, trs: 4.991, trs_per_mw: 55456, year: 2011 },
+                { tr: "TR1", project: "Walney 1", capacity: 184, value: 105.4, trs: 11.558, trs_per_mw: 62816, year: 2011 },
+                { tr: "TR1", project: "Ormonde", capacity: 150, value: 103.9, trs: 10.603, trs_per_mw: 70687, year: 2012 },
+                { tr: "TR1", project: "Walney 2", capacity: 184, value: 109.8, trs: 12.466, trs_per_mw: 67748, year: 2012 },
+                { tr: "TR1", project: "Sheringham Shoal", capacity: 315, value: 193.1, trs: 10.9, trs_per_mw: 34603, year: 2016 },
+                { tr: "TR1", project: "Greater Gabbard", capacity: 504, value: 317.1, trs: 26.793, trs_per_mw: 53161, year: 2013 },
+                { tr: "TR1", project: "Thanet", capacity: 300, value: 163.5, trs: 16.874, trs_per_mw: 56247, year: 2014 },
+                { tr: "TR2", project: "London Array", capacity: 630, value: 472.5, trs: 34.936, trs_per_mw: 55453, year: 2013 },
+                { tr: "TR2", project: "Lincs", capacity: 270, value: 322, trs: 24.635, trs_per_mw: 91241, year: 2014 },
+                { tr: "TR2", project: "Gwynt y Môr", capacity: 574, value: 351.9, trs: 25.152, trs_per_mw: 43819, year: 2015 },
+                { tr: "TR2", project: "West of Duddon Sands", capacity: 388, value: 268.9, trs: 19.691, trs_per_mw: 50750, year: 2015 },
+                { tr: "TR3", project: "Westermost Rough", capacity: 205, value: 156.7, trs: 11.315, trs_per_mw: 55195, year: 2016 },
+                { tr: "TR3", project: "Humber Gateway", capacity: 219, value: 162.9, trs: 10.9, trs_per_mw: 49772, year: 2016 },
+                { tr: "TR4", project: "Burbo Bank Extension", capacity: 258, value: 193.9, trs: 11.374, trs_per_mw: 44085, year: 2018 },
+                { tr: "TR5", project: "Dudgeon", capacity: 402, value: 297.9, trs: 17.924, trs_per_mw: 44588, year: 2018 },
+                { tr: "TR5", project: "Race Bank", capacity: 573, value: 472.5, trs: 25.568, trs_per_mw: 44621, year: 2019 },
+                { tr: "TR5", project: "Galloper", capacity: 340, value: 281.8, trs: 16.032, trs_per_mw: 47153, year: 2020 },
+                { tr: "TR5", project: "Walney Extension", capacity: 600, value: 446.6, trs: 25.181, trs_per_mw: 41968, year: 2020 },
+                { tr: "TR5", project: "Rampion", capacity: 400, value: 279.5, trs: 14.969, trs_per_mw: 37423, year: 2021 },
+                { tr: "TR6", project: "Hornsea One", capacity: 1218, value: 1175, trs: 43.412, trs_per_mw: 35642, year: 2021 },
+                { tr: "TR6", project: "Beatrice", capacity: 588, value: 437.9, trs: 18.34, trs_per_mw: 31190, year: 2021 },
+                { tr: "TR6", project: "East Anglia One", capacity: 714, value: 692.6, trs: 32.719, trs_per_mw: 45825, year: 2022 },
+                { tr: "TR7", project: "Moray East", capacity: 900, value: 666.1, trs: 26.614, trs_per_mw: 29571, year: 2024 },
+                { tr: "TR7", project: "Triton Knoll", capacity: 857, value: 572.7, trs: 33.809, trs_per_mw: 39451, year: 2024 },
+                { tr: "TR8", project: "Hornsea Two", capacity: 1386, value: 1141.2, trs: 50.491, trs_per_mw: 36429, year: 2023 }
             ];
         }
 
@@ -982,14 +993,14 @@
             svg.selectAll('.axis line').attr('stroke', colors.lightGray);
         }
 
-        // Chart 3: Waterfall Chart
+        // Chart 3: Revenue per MW by Tender Round (Scatter Plot)
         function renderChart3() {
             const container = document.getElementById('chart3');
             container.innerHTML = '';
 
-            const margin = {top: 20, right: 30, bottom: 60, left: 60};
+            const margin = {top: 20, right: 30, bottom: 60, left: 80};
             const width = container.offsetWidth - margin.left - margin.right;
-            const height = 320 - margin.top - margin.bottom;
+            const height = 380 - margin.top - margin.bottom;
 
             const svg = d3.select('#chart3')
                 .append('svg')
@@ -998,92 +1009,84 @@
                 .append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
 
-            const data = visualizationData?.revenueData || extractRevenueData();
+            const data = extractOFTOProjectData();
 
-            // Calculate cumulative values
-            let cumulative = 0;
-            const waterfallData = data.map((d, i) => {
-                const start = cumulative;
-                cumulative += d.value;
-                return {
-                    category: d.category,
-                    value: d.value,
-                    start: start,
-                    end: cumulative
-                };
-            });
+            // Get unique tender rounds and sort them
+            const tenderRounds = [...new Set(data.map(d => d.tr))].sort();
 
-            // Scales
+            // Color scale for tender rounds
+            const colorScale = d3.scaleOrdinal()
+                .domain(tenderRounds)
+                .range([colors.orange, '#ef4444', colors.blue, colors.lightBlue, colors.teal, colors.green, colors.purple, '#8b5cf6']);
+
+            // X Scale (Tender Rounds)
             const x = d3.scaleBand()
-                .domain(data.map(d => d.category))
+                .domain(tenderRounds)
                 .range([0, width])
-                .padding(0.3);
+                .padding(0.1);
 
+            // Y Scale (Revenue per MW)
             const y = d3.scaleLinear()
-                .domain([0, cumulative * 1.1])
+                .domain([0, d3.max(data, d => d.trs_per_mw) * 1.1])
                 .range([height, 0]);
 
-            // Bars
-            svg.selectAll('.bar')
-                .data(waterfallData)
+            // Grid lines
+            svg.append('g')
+                .attr('class', 'grid')
+                .attr('opacity', 0.1)
+                .call(d3.axisLeft(y).tickSize(-width).tickFormat(''));
+
+            // Jitter plot with scatter points
+            const jitterWidth = x.bandwidth() * 0.6;
+            svg.selectAll('.dot')
+                .data(data)
                 .enter()
-                .append('rect')
-                .attr('class', 'bar')
-                .attr('x', d => x(d.category))
-                .attr('y', d => y(d.end))
-                .attr('width', x.bandwidth())
-                .attr('height', d => y(d.start) - y(d.end))
-                .attr('fill', (d, i) => [colors.blue, colors.green, colors.teal, colors.orange][i % 4]);
+                .append('circle')
+                .attr('cx', d => x(d.tr) + x.bandwidth() / 2 + (Math.random() - 0.5) * jitterWidth)
+                .attr('cy', d => y(d.trs_per_mw))
+                .attr('r', 6)
+                .attr('fill', d => colorScale(d.tr))
+                .attr('opacity', 0.7)
+                .attr('stroke', 'white')
+                .attr('stroke-width', 1.5);
 
-            // Connectors
-            waterfallData.forEach((d, i) => {
-                if (i < waterfallData.length - 1) {
-                    svg.append('line')
-                        .attr('x1', x(d.category) + x.bandwidth())
-                        .attr('x2', x(waterfallData[i + 1].category))
-                        .attr('y1', y(d.end))
-                        .attr('y2', y(d.end))
-                        .attr('stroke', colors.lightGray)
-                        .attr('stroke-width', 1)
-                        .attr('stroke-dasharray', '3,3');
-                }
-            });
-
-            // Value labels
-            svg.selectAll('.label')
-                .data(waterfallData)
-                .enter()
-                .append('text')
-                .attr('x', d => x(d.category) + x.bandwidth() / 2)
-                .attr('y', d => y(d.end) - 5)
-                .attr('text-anchor', 'middle')
-                .attr('font-size', '11px')
-                .attr('font-weight', '700')
-                .attr('fill', colors.gray)
-                .text(d => `£${d.value}m`);
-
-            // Axes
+            // X-axis
             svg.append('g')
                 .attr('class', 'axis')
                 .attr('transform', `translate(0,${height})`)
                 .call(d3.axisBottom(x))
                 .selectAll('text')
-                .attr('transform', 'rotate(-15)')
-                .style('text-anchor', 'end');
+                .style('font-size', '11px');
 
+            // Y-axis
             svg.append('g')
                 .attr('class', 'axis')
-                .call(d3.axisLeft(y).ticks(5).tickFormat(d => `£${d}m`));
+                .call(d3.axisLeft(y).ticks(6).tickFormat(d => `£${(d/1000).toFixed(0)}k`));
+
+            // Y-axis label
+            svg.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('x', -height / 2)
+                .attr('y', -60)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .attr('font-weight', '600')
+                .attr('fill', colors.gray)
+                .text('Annual TRS per MW');
+
+            // Remove axis lines for cleaner look
+            svg.selectAll('.axis path').remove();
+            svg.selectAll('.axis line').attr('stroke', colors.lightGray);
         }
 
-        // Chart 4: Distribution/Scatter Plot
+        // Chart 4: Capacity vs Transfer Value (Bubble Chart)
         function renderChart4() {
             const container = document.getElementById('chart4');
             container.innerHTML = '';
 
-            const margin = {top: 20, right: 30, bottom: 40, left: 60};
+            const margin = {top: 20, right: 30, bottom: 60, left: 80};
             const width = container.offsetWidth - margin.left - margin.right;
-            const height = 320 - margin.top - margin.bottom;
+            const height = 380 - margin.top - margin.bottom;
 
             const svg = d3.select('#chart4')
                 .append('svg')
@@ -1092,64 +1095,85 @@
                 .append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
 
-            const data = visualizationData?.irrData || extractIRRData();
+            const data = extractOFTOProjectData();
+
+            // Get unique tender rounds
+            const tenderRounds = [...new Set(data.map(d => d.tr))].sort();
+
+            // Color scale for tender rounds
+            const colorScale = d3.scaleOrdinal()
+                .domain(tenderRounds)
+                .range([colors.orange, '#ef4444', colors.blue, colors.lightBlue, colors.teal, colors.green, colors.purple, '#8b5cf6']);
 
             // Scales
-            const x = d3.scaleBand()
-                .domain(data.map(d => d.project))
-                .range([0, width])
-                .padding(0.5);
+            const x = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.capacity) * 1.05])
+                .range([0, width]);
 
             const y = d3.scaleLinear()
-                .domain([0, d3.max(data, d => d.irr) * 1.2])
+                .domain([0, d3.max(data, d => d.value) * 1.05])
                 .range([height, 0]);
 
-            // Grid
+            const z = d3.scaleSqrt()
+                .domain([0, d3.max(data, d => d.trs)])
+                .range([4, 30]);
+
+            // Grid lines
             svg.append('g')
                 .attr('class', 'grid')
-                .attr('opacity', 0.3)
+                .attr('opacity', 0.1)
                 .call(d3.axisLeft(y).tickSize(-width).tickFormat(''));
 
-            // Data points
-            svg.selectAll('.dot')
+            // Bubbles
+            svg.selectAll('.bubble')
                 .data(data)
                 .enter()
                 .append('circle')
-                .attr('cx', d => x(d.project) + x.bandwidth() / 2)
-                .attr('cy', d => y(d.irr))
-                .attr('r', 7)
-                .attr('fill', colors.purple)
-                .attr('opacity', 0.7);
+                .attr('class', 'bubble')
+                .attr('cx', d => x(d.capacity))
+                .attr('cy', d => y(d.value))
+                .attr('r', d => z(d.trs))
+                .attr('fill', d => colorScale(d.tr))
+                .attr('opacity', 0.6)
+                .attr('stroke', d => d3.rgb(colorScale(d.tr)).darker(1))
+                .attr('stroke-width', 1.5);
 
-            // Mean line
-            const mean = d3.mean(data, d => d.irr);
-            svg.append('line')
-                .attr('x1', 0)
-                .attr('x2', width)
-                .attr('y1', y(mean))
-                .attr('y2', y(mean))
-                .attr('stroke', colors.orange)
-                .attr('stroke-width', 2)
-                .attr('stroke-dasharray', '5,5');
-
-            svg.append('text')
-                .attr('x', width - 10)
-                .attr('y', y(mean) - 10)
-                .attr('text-anchor', 'end')
-                .attr('font-size', '11px')
-                .attr('font-weight', '700')
-                .attr('fill', colors.orange)
-                .text(`Mean: ${mean.toFixed(1)}%`);
-
-            // Axes
+            // X-axis
             svg.append('g')
                 .attr('class', 'axis')
                 .attr('transform', `translate(0,${height})`)
-                .call(d3.axisBottom(x));
+                .call(d3.axisBottom(x).ticks(6).tickFormat(d => `${d} MW`))
+                .selectAll('text')
+                .style('font-size', '10px');
 
+            // Y-axis
             svg.append('g')
                 .attr('class', 'axis')
-                .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d}%`));
+                .call(d3.axisLeft(y).ticks(6).tickFormat(d => `£${d}m`));
+
+            // Axis labels
+            svg.append('text')
+                .attr('x', width / 2)
+                .attr('y', height + 45)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .attr('font-weight', '600')
+                .attr('fill', colors.gray)
+                .text('Capacity (MW)');
+
+            svg.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('x', -height / 2)
+                .attr('y', -60)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .attr('font-weight', '600')
+                .attr('fill', colors.gray)
+                .text('Transfer Value (£m)');
+
+            // Remove axis lines for cleaner look
+            svg.selectAll('.axis path').remove();
+            svg.selectAll('.axis line').attr('stroke', colors.lightGray);
         }
 
         // Initialize charts with sample data on page load
