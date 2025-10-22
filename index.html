@@ -468,27 +468,43 @@
 
             <!-- References Content -->
             <div id="content-references" class="tab-content">
-                 <div class="bg-white p-8 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-6 border-b pb-2">References & Sources</h2>
-                    <ul class="list-disc list-inside space-y-4 text-gray-700">
-                        <li>
-                            <strong>[Source Name 1]</strong> - "[Title of Publication or Report]," Publisher, Year. Link: <a href="#" class="text-blue-600 hover:underline">[URL]</a>
-                        </li>
-                        <li>
-                            <strong>[Source Name 2]</strong> - "[Title of Article]," Journal of Financial Regulation, Vol. X, Issue Y, pp. 123-456, Date.
-                        </li>
-                         <li>
-                            <strong>[Regulatory Body]</strong> - "Annual Industry Report [Year]," official website. Link: <a href="#" class="text-blue-600 hover:underline">[URL]</a>
-                        </li>
-                        <li>
-                            <strong>[Company Name]</strong> - "Annual Financial Statements [Year]," Investor Relations Portal. Link: <a href="#" class="text-blue-600 hover:underline">[URL]</a>
-                        </li>
-                        <li>
-                            <strong>Internal Analysis</strong> - Financial Models and Projections developed by [Your Firm's Name] Equity Research.
-                        </li>
-                    </ul>
+                 <div class="bg-white p-12 rounded-lg shadow" style="min-height: 400px; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; max-width: 500px;">
+                        <!-- Construction Icon -->
+                        <svg style="width: 80px; height: 80px; margin: 0 auto 24px; color: var(--mckinsey-blue); opacity: 0.6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+
+                        <h2 class="text-3xl font-bold mb-4" style="color: var(--mckinsey-blue);">
+                            Work in Progress
+                        </h2>
+
+                        <p class="text-lg mb-3" style="color: var(--mckinsey-gray);">
+                            References and sources are currently being compiled.
+                        </p>
+
+                        <p class="text-sm" style="color: var(--mckinsey-gray); opacity: 0.8;">
+                            This section will include detailed citations for all data sources, regulatory documents, and research materials referenced throughout the analysis.
+                        </p>
+
+                        <!-- Progress indicator -->
+                        <div class="mt-8">
+                            <div class="flex justify-center items-center gap-2">
+                                <div class="w-2 h-2 rounded-full" style="background-color: var(--mckinsey-blue); animation: pulse 1.5s ease-in-out infinite;"></div>
+                                <div class="w-2 h-2 rounded-full" style="background-color: var(--mckinsey-blue); animation: pulse 1.5s ease-in-out 0.2s infinite;"></div>
+                                <div class="w-2 h-2 rounded-full" style="background-color: var(--mckinsey-blue); animation: pulse 1.5s ease-in-out 0.4s infinite;"></div>
+                            </div>
+                        </div>
+                    </div>
                  </div>
             </div>
+
+            <style>
+                @keyframes pulse {
+                    0%, 100% { opacity: 0.3; transform: scale(1); }
+                    50% { opacity: 1; transform: scale(1.2); }
+                }
+            </style>
         </div>
     </main>
 
