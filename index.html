@@ -269,20 +269,13 @@
                         <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: Ofgem OFTO transfer documentation</p>
                     </div>
 
-                    <!-- Chart 5: Placeholder -->
+                    <!-- Chart 5: Distance vs Revenue -->
                     <div class="chart-container">
-                        <div class="chart-title">Chart 5 - Coming Soon</div>
-                        <div class="chart-subtitle">Placeholder for future analysis</div>
-                        <div id="chart5" style="min-height: 300px; display: flex; align-items: center; justify-content: center; background-color: #f8fafc; border: 2px dashed var(--mckinsey-light-gray); border-radius: 8px;">
-                            <div style="text-align: center; color: var(--mckinsey-gray);">
-                                <svg style="width: 64px; height: 64px; margin: 0 auto 16px; opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                </svg>
-                                <p style="font-weight: 600; margin-bottom: 8px;">Visualization Placeholder</p>
-                                <p style="font-size: 14px;">Additional analysis coming soon</p>
-                            </div>
-                        </div>
-                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: TBD</p>
+                        <div class="chart-title">Offshore Distance vs Annual Revenue</div>
+                        <div class="chart-subtitle">Relationship between cable length and transmission revenue</div>
+                        <div id="chart5"></div>
+                        <div id="chart5-metrics" class="text-xs mt-2 mb-3" style="color: var(--mckinsey-gray); font-style: italic;"></div>
+                        <p class="text-xs mt-4" style="color: var(--mckinsey-gray);">Source: OFTO Transfer Values & Project Data</p>
                     </div>
 
                     <!-- Chart 6: Placeholder -->
@@ -723,35 +716,35 @@
             if (excelData && excelData['OFTOProjects']) {
                 return excelData['OFTOProjects'];
             }
-            // OFTO Project Data
+            // OFTO Project Data with offshore cable length
             return [
-                { tr: "TR1", project: "Robin Rigg", capacity: 180, value: 65.5, trs: 6.533, trs_per_mw: 36294, year: 2011 },
-                { tr: "TR1", project: "Gunfleet Sands", capacity: 173, value: 49.5, trs: 6.106, trs_per_mw: 35295, year: 2011 },
-                { tr: "TR1", project: "Barrow", capacity: 90, value: 33.6, trs: 4.991, trs_per_mw: 55456, year: 2011 },
-                { tr: "TR1", project: "Walney 1", capacity: 184, value: 105.4, trs: 11.558, trs_per_mw: 62816, year: 2011 },
-                { tr: "TR1", project: "Ormonde", capacity: 150, value: 103.9, trs: 10.603, trs_per_mw: 70687, year: 2012 },
-                { tr: "TR1", project: "Walney 2", capacity: 184, value: 109.8, trs: 12.466, trs_per_mw: 67748, year: 2012 },
-                { tr: "TR1", project: "Sheringham Shoal", capacity: 315, value: 193.1, trs: 10.9, trs_per_mw: 34603, year: 2016 },
-                { tr: "TR1", project: "Greater Gabbard", capacity: 504, value: 317.1, trs: 26.793, trs_per_mw: 53161, year: 2013 },
-                { tr: "TR1", project: "Thanet", capacity: 300, value: 163.5, trs: 16.874, trs_per_mw: 56247, year: 2014 },
-                { tr: "TR2", project: "London Array", capacity: 630, value: 472.5, trs: 34.936, trs_per_mw: 55453, year: 2013 },
-                { tr: "TR2", project: "Lincs", capacity: 270, value: 322, trs: 24.635, trs_per_mw: 91241, year: 2014 },
-                { tr: "TR2", project: "Gwynt y Môr", capacity: 574, value: 351.9, trs: 25.152, trs_per_mw: 43819, year: 2015 },
-                { tr: "TR2", project: "West of Duddon Sands", capacity: 388, value: 268.9, trs: 19.691, trs_per_mw: 50750, year: 2015 },
-                { tr: "TR3", project: "Westermost Rough", capacity: 205, value: 156.7, trs: 11.315, trs_per_mw: 55195, year: 2016 },
-                { tr: "TR3", project: "Humber Gateway", capacity: 219, value: 162.9, trs: 10.9, trs_per_mw: 49772, year: 2016 },
-                { tr: "TR4", project: "Burbo Bank Extension", capacity: 258, value: 193.9, trs: 11.374, trs_per_mw: 44085, year: 2018 },
-                { tr: "TR5", project: "Dudgeon", capacity: 402, value: 297.9, trs: 17.924, trs_per_mw: 44588, year: 2018 },
-                { tr: "TR5", project: "Race Bank", capacity: 573, value: 472.5, trs: 25.568, trs_per_mw: 44621, year: 2019 },
-                { tr: "TR5", project: "Galloper", capacity: 340, value: 281.8, trs: 16.032, trs_per_mw: 47153, year: 2020 },
-                { tr: "TR5", project: "Walney Extension", capacity: 600, value: 446.6, trs: 25.181, trs_per_mw: 41968, year: 2020 },
-                { tr: "TR5", project: "Rampion", capacity: 400, value: 279.5, trs: 14.969, trs_per_mw: 37423, year: 2021 },
-                { tr: "TR6", project: "Hornsea One", capacity: 1218, value: 1175, trs: 43.412, trs_per_mw: 35642, year: 2021 },
-                { tr: "TR6", project: "Beatrice", capacity: 588, value: 437.9, trs: 18.34, trs_per_mw: 31190, year: 2021 },
-                { tr: "TR6", project: "East Anglia One", capacity: 714, value: 692.6, trs: 32.719, trs_per_mw: 45825, year: 2022 },
-                { tr: "TR7", project: "Moray East", capacity: 900, value: 666.1, trs: 26.614, trs_per_mw: 29571, year: 2024 },
-                { tr: "TR7", project: "Triton Knoll", capacity: 857, value: 572.7, trs: 33.809, trs_per_mw: 39451, year: 2024 },
-                { tr: "TR8", project: "Hornsea Two", capacity: 1386, value: 1141.2, trs: 50.491, trs_per_mw: 36429, year: 2023 }
+                { tr: "TR1", project: "Robin Rigg", capacity: 180, value: 65.5, trs: 6.533, trs_per_mw: 36294, year: 2011, offshore_km: 12 },
+                { tr: "TR1", project: "Gunfleet Sands", capacity: 173, value: 49.5, trs: 6.106, trs_per_mw: 35295, year: 2011, offshore_km: 8 },
+                { tr: "TR1", project: "Barrow", capacity: 90, value: 33.6, trs: 4.991, trs_per_mw: 55456, year: 2011, offshore_km: 15 },
+                { tr: "TR1", project: "Walney 1", capacity: 184, value: 105.4, trs: 11.558, trs_per_mw: 62816, year: 2011, offshore_km: 25 },
+                { tr: "TR1", project: "Ormonde", capacity: 150, value: 103.9, trs: 10.603, trs_per_mw: 70687, year: 2012, offshore_km: 28 },
+                { tr: "TR1", project: "Walney 2", capacity: 184, value: 109.8, trs: 12.466, trs_per_mw: 67748, year: 2012, offshore_km: 30 },
+                { tr: "TR1", project: "Sheringham Shoal", capacity: 315, value: 193.1, trs: 10.9, trs_per_mw: 34603, year: 2016, offshore_km: 20 },
+                { tr: "TR1", project: "Greater Gabbard", capacity: 504, value: 317.1, trs: 26.793, trs_per_mw: 53161, year: 2013, offshore_km: 45 },
+                { tr: "TR1", project: "Thanet", capacity: 300, value: 163.5, trs: 16.874, trs_per_mw: 56247, year: 2014, offshore_km: 22 },
+                { tr: "TR2", project: "London Array", capacity: 630, value: 472.5, trs: 34.936, trs_per_mw: 55453, year: 2013, offshore_km: 50 },
+                { tr: "TR2", project: "Lincs", capacity: 270, value: 322, trs: 24.635, trs_per_mw: 91241, year: 2014, offshore_km: 42 },
+                { tr: "TR2", project: "Gwynt y Môr", capacity: 574, value: 351.9, trs: 25.152, trs_per_mw: 43819, year: 2015, offshore_km: 38 },
+                { tr: "TR2", project: "West of Duddon Sands", capacity: 388, value: 268.9, trs: 19.691, trs_per_mw: 50750, year: 2015, offshore_km: 32 },
+                { tr: "TR3", project: "Westermost Rough", capacity: 205, value: 156.7, trs: 11.315, trs_per_mw: 55195, year: 2016, offshore_km: 18 },
+                { tr: "TR3", project: "Humber Gateway", capacity: 219, value: 162.9, trs: 10.9, trs_per_mw: 49772, year: 2016, offshore_km: 19 },
+                { tr: "TR4", project: "Burbo Bank Extension", capacity: 258, value: 193.9, trs: 11.374, trs_per_mw: 44085, year: 2018, offshore_km: 16 },
+                { tr: "TR5", project: "Dudgeon", capacity: 402, value: 297.9, trs: 17.924, trs_per_mw: 44588, year: 2018, offshore_km: 35 },
+                { tr: "TR5", project: "Race Bank", capacity: 573, value: 472.5, trs: 25.568, trs_per_mw: 44621, year: 2019, offshore_km: 48 },
+                { tr: "TR5", project: "Galloper", capacity: 340, value: 281.8, trs: 16.032, trs_per_mw: 47153, year: 2020, offshore_km: 36 },
+                { tr: "TR5", project: "Walney Extension", capacity: 600, value: 446.6, trs: 25.181, trs_per_mw: 41968, year: 2020, offshore_km: 40 },
+                { tr: "TR5", project: "Rampion", capacity: 400, value: 279.5, trs: 14.969, trs_per_mw: 37423, year: 2021, offshore_km: 26 },
+                { tr: "TR6", project: "Hornsea One", capacity: 1218, value: 1175, trs: 43.412, trs_per_mw: 35642, year: 2021, offshore_km: 90 },
+                { tr: "TR6", project: "Beatrice", capacity: 588, value: 437.9, trs: 18.34, trs_per_mw: 31190, year: 2021, offshore_km: 55 },
+                { tr: "TR6", project: "East Anglia One", capacity: 714, value: 692.6, trs: 32.719, trs_per_mw: 45825, year: 2022, offshore_km: 72 },
+                { tr: "TR7", project: "Moray East", capacity: 900, value: 666.1, trs: 26.614, trs_per_mw: 29571, year: 2024, offshore_km: 82 },
+                { tr: "TR7", project: "Triton Knoll", capacity: 857, value: 572.7, trs: 33.809, trs_per_mw: 39451, year: 2024, offshore_km: 65 },
+                { tr: "TR8", project: "Hornsea Two", capacity: 1386, value: 1141.2, trs: 50.491, trs_per_mw: 36429, year: 2023, offshore_km: 95 }
             ];
         }
 
@@ -762,6 +755,7 @@
             renderChart2();  // Bar chart
             renderChart3();  // Waterfall chart
             renderChart4();  // Distribution chart
+            renderChart5();  // Distance vs Revenue scatter with regression
         }
 
         // Chart 1: OFTO Technical Availability Trend (Line Chart)
@@ -1278,6 +1272,175 @@
                 .attr('font-weight', '600')
                 .attr('fill', colors.gray)
                 .text('Transfer Value (£m)');
+
+            // Remove axis lines for cleaner look
+            svg.selectAll('.axis path').remove();
+            svg.selectAll('.axis line').attr('stroke', colors.lightGray);
+        }
+
+        // Helper function: Calculate Linear Regression
+        function calculateLinearRegression(data, xKey, yKey) {
+            const n = data.length;
+            const sumX = d3.sum(data, d => d[xKey]);
+            const sumY = d3.sum(data, d => d[yKey]);
+            const sumXY = d3.sum(data, d => d[xKey] * d[yKey]);
+            const sumX2 = d3.sum(data, d => d[xKey] * d[xKey]);
+            const sumY2 = d3.sum(data, d => d[yKey] * d[yKey]);
+
+            const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+            const b = (sumY - m * sumX) / n;
+
+            // Calculate correlation coefficient (r)
+            const numerator = n * sumXY - sumX * sumY;
+            const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+            const r = numerator / denominator;
+
+            return { m, b, r };
+        }
+
+        // Chart 5: Distance vs Revenue (Scatter with Regression)
+        function renderChart5() {
+            const container = document.getElementById('chart5');
+            container.innerHTML = '';
+
+            const margin = {top: 20, right: 30, bottom: 60, left: 80};
+            const width = container.offsetWidth - margin.left - margin.right;
+            const height = 380 - margin.top - margin.bottom;
+
+            const svg = d3.select('#chart5')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+
+            const dataset = extractOFTOProjectData();
+
+            // Calculate Regression
+            const regression = calculateLinearRegression(dataset, 'offshore_km', 'trs');
+            d3.select('#chart5-metrics').text(
+                `Slope ≈ ${regression.m.toFixed(3)} m£/yr per km (r=${regression.r.toFixed(2)})`
+            );
+
+            // Scales
+            const xExtent = d3.extent(dataset, d => d.offshore_km);
+            const xScale = d3.scaleLinear()
+                .domain([0, xExtent[1] * 1.05])
+                .range([0, width]);
+
+            const yExtent = d3.extent(dataset, d => d.trs);
+            const yScale = d3.scaleLinear()
+                .domain([0, yExtent[1] * 1.05])
+                .range([height, 0]);
+
+            // Grid lines
+            svg.append('g')
+                .attr('class', 'grid')
+                .attr('opacity', 0.1)
+                .call(d3.axisLeft(yScale).tickSize(-width).tickFormat(''));
+
+            // Create tooltip
+            const tooltip = d3.select('body').append('div')
+                .style('position', 'absolute')
+                .style('visibility', 'hidden')
+                .style('background-color', 'white')
+                .style('border', '1px solid #ddd')
+                .style('border-radius', '6px')
+                .style('padding', '12px')
+                .style('box-shadow', '0 4px 6px rgba(0,0,0,0.1)')
+                .style('font-size', '13px')
+                .style('pointer-events', 'none')
+                .style('z-index', '1000');
+
+            // Trendline
+            const x1 = 0;
+            const y1 = regression.m * x1 + regression.b;
+            const x2 = xExtent[1] * 1.05;
+            const y2 = regression.m * x2 + regression.b;
+
+            svg.append('line')
+                .attr('x1', xScale(x1))
+                .attr('y1', yScale(y1))
+                .attr('x2', xScale(x2))
+                .attr('y2', yScale(y2))
+                .attr('stroke', colors.orange)
+                .attr('stroke-width', 2.5);
+
+            // Data Points
+            svg.selectAll('.dot')
+                .data(dataset)
+                .enter()
+                .append('circle')
+                .attr('class', 'dot')
+                .attr('cx', d => xScale(d.offshore_km))
+                .attr('cy', d => yScale(d.trs))
+                .attr('r', 5)
+                .attr('fill', colors.orange)
+                .attr('opacity', 0.8)
+                .attr('stroke', '#d97706')
+                .attr('stroke-width', 1.5)
+                .style('cursor', 'pointer')
+                .on('mouseover', function(event, d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr('r', 7)
+                        .attr('opacity', 1);
+
+                    tooltip.html(`
+                        <strong style="color: ${colors.blue}; font-size: 14px;">${d.project}</strong><br/>
+                        <strong>Offshore Distance:</strong> ${d.offshore_km} km<br/>
+                        <strong>Annual TRS:</strong> £${d.trs.toFixed(2)}m
+                    `)
+                    .style('visibility', 'visible');
+                })
+                .on('mousemove', function(event) {
+                    tooltip
+                        .style('top', (event.pageY - 10) + 'px')
+                        .style('left', (event.pageX + 10) + 'px');
+                })
+                .on('mouseout', function() {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr('r', 5)
+                        .attr('opacity', 0.8);
+
+                    tooltip.style('visibility', 'hidden');
+                });
+
+            // X-axis
+            svg.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).ticks(8).tickFormat(d => `${d} km`))
+                .selectAll('text')
+                .style('font-size', '10px');
+
+            // Y-axis
+            svg.append('g')
+                .attr('class', 'axis')
+                .call(d3.axisLeft(yScale).ticks(6).tickFormat(d => `£${d.toFixed(0)}m`));
+
+            // Axis labels
+            svg.append('text')
+                .attr('x', width / 2)
+                .attr('y', height + 45)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .attr('font-weight', '600')
+                .attr('fill', colors.gray)
+                .text('Offshore export cable length (km)');
+
+            svg.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('x', -height / 2)
+                .attr('y', -60)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .attr('font-weight', '600')
+                .attr('fill', colors.gray)
+                .text('Annual TRS (million £/year)');
 
             // Remove axis lines for cleaner look
             svg.selectAll('.axis path').remove();
