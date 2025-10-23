@@ -223,6 +223,18 @@
                     <div class="chart-container">
                         <div class="chart-title">OFTO Availability Performance</div>
                         <div class="chart-subtitle">Average annual availability since project inception (%)</div>
+
+                        <!-- Overall Average Statistics Box -->
+                        <div class="mb-4 p-4 rounded" style="background-color: #f0f9ff; border: 2px solid var(--mckinsey-blue); display: inline-block;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="font-size: 28px; font-weight: 700; color: var(--mckinsey-blue);">99.17%</div>
+                                <div style="font-size: 13px; color: var(--mckinsey-gray); line-height: 1.4;">
+                                    <strong>Overall Portfolio Average</strong><br/>
+                                    Across all projects & years
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="chart1"></div>
                         <p class="text-xs mt-4 mb-3" style="color: var(--mckinsey-gray);">Source: <a href="https://www.neso.energy/industry-information/industry-data-and-reports/system-performance-reports" target="_blank" style="color: var(--mckinsey-blue); text-decoration: underline;">NESO - Offshore System Availability</a> (Adjusted with Exception Events approved by OFGEM)</p>
                         <div class="p-3 mt-2 rounded" style="background-color: #f0f4f8; border-left: 3px solid var(--mckinsey-blue);">
@@ -777,7 +789,7 @@
                 .padding(0.1);
 
             const y = d3.scaleLinear()
-                .domain([95, 101])
+                .domain([95, 100])
                 .range([height, 0]);
 
             // Line generator
@@ -903,7 +915,7 @@
             // Y-axis with 1% steps
             svg.append('g')
                 .attr('class', 'axis')
-                .call(d3.axisLeft(y).ticks(6).tickValues([95, 96, 97, 98, 99, 100, 101]).tickFormat(d => `${d}%`));
+                .call(d3.axisLeft(y).ticks(6).tickValues([95, 96, 97, 98, 99, 100]).tickFormat(d => `${d}%`));
 
             // Remove axis lines for cleaner look
             svg.selectAll('.axis path').remove();
