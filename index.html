@@ -1322,8 +1322,12 @@
 
             // Calculate Regression
             const regression = calculateLinearRegression(dataset, 'offshore_km', 'trs');
-            d3.select('#chart5-metrics').text(
-                `Slope ≈ ${regression.m.toFixed(3)} m£/yr per km (r=${regression.r.toFixed(2)})`
+            const slopeInThousands = regression.m * 1000; // Convert from m£ to £k
+            d3.select('#chart5-metrics').html(
+                `Slope ≈ ${regression.m.toFixed(3)} m£/yr per km (r=${regression.r.toFixed(2)})<br/>` +
+                `<span style="color: var(--mckinsey-gray); font-style: normal; margin-top: 4px; display: block;">` +
+                `After accounting for capacity and tender round, each extra offshore km is associated with roughly £${Math.round(slopeInThousands/5)*5}k per year more allowed revenue at the project level.` +
+                `</span>`
             );
 
             // Scales
